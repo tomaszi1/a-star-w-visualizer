@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane fx:id="rootBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            xmlns="http://javafx.com/javafx/8.0.91" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="edu.agh.idziak.asw.visualizer.gui.root.RootPresenter">
+    <center>
+        <AnchorPane fx:id="canvasContainer">
+            <Canvas fx:id="canvas" BorderPane.alignment="TOP_LEFT"/>
+        </AnchorPane>
+    </center>
+    <bottom>
+        <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <items>
+                <Button fx:id="buttonOpenTests" mnemonicParsing="false" text="Open tests"/>
+                <Button fx:id="buttonSaveTests" mnemonicParsing="false" text="Save tests"/>
+                <Button fx:id="buttonSaveTestsAs" mnemonicParsing="false" text="Save tests as..."/>
+                <Button fx:id="buttonExecuteTest" mnemonicParsing="false" text="Execute test"/>
+            </items>
+        </ToolBar>
+    </bottom>
+    <right>
+        <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER"/>
+    </right>
+    <left>
+        <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <top>
+                <Label fx:id="testFileLabel" text="Test file:" BorderPane.alignment="CENTER"/>
+            </top>
+            <center>
+                <ListView fx:id="testCaseListView" onMouseClicked="#listViewClicked" prefHeight="200.0"
+                          prefWidth="200.0" BorderPane.alignment="CENTER"/>
+            </center>
+        </BorderPane>
+    </left>
+</BorderPane>
