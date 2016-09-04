@@ -1,10 +1,30 @@
-[{
-  "name": "test1",
-  "stateSpace" : [ [ 1, 1, 1 ], [ 1, 1, 1 ], [ 1, 1, 1 ] ],
+[ {
+  "name" : "test1",
+  "stateSpaceRows" : 10,
+  "stateSpaceCols" : 10,
+  "entities" : [ 
+  {
+    "id" : 1,
+    "row" : 2,
+    "col" : 1,
+    "targetRow" : 3,
+    "targetCol" : 5
+  },{
+    "id" : 2,
+    "row" : 4,
+    "col" : 4,
+    "targetRow" : 3,
+    "targetCol" : 5
+  } ]
+}, {
+  "name" : "test2",
+  "stateSpaceRows" : 20,
+  "stateSpaceCols" : 20,
   "entities" : [ {
+    "id" : 1,
     "row" : 2,
     "col" : 1,
     "targetRow" : 3,
     "targetCol" : 5
   } ]
-}]
+} ]

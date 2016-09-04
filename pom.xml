@@ -6,9 +6,15 @@
     <artifactId>visualizer</artifactId>
     <version>0.1-PREALPHA</version>
     <packaging>jar</packaging>
-    <name>visualizer</name>
+    <name>a-star-w-visualizer</name>
 
     <dependencies>
+        <dependency>
+            <groupId>edu.agh.idziak.astarw</groupId>
+            <artifactId>a-star-w-algorithm</artifactId>
+            <version>0.1-ALPHA</version>
+        </dependency>
+
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>

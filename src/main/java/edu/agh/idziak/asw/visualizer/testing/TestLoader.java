@@ -24,4 +24,5 @@ public class TestLoader {
         OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file));
         testsJsonMapper.writeTests(outputStream, testCaseDTOs);
     }
+
 }

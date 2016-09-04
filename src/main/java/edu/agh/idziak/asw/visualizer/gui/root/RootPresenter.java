@@ -9,8 +9,8 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.SplitPane;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 
@@ -25,15 +25,17 @@ import java.util.ResourceBundle;
 public class RootPresenter implements Initializable {
 
     @FXML
-    public Label testFileLabel;
+    private BorderPane testListBorderPane;
     @FXML
-    public SpacePane spacePane;
+    private Label testFileLabel;
     @FXML
-    public BorderPane rootBorderPane;
+    private SpacePane spacePane;
     @FXML
-    public Canvas canvas;
+    private BorderPane rootBorderPane;
     @FXML
-    public AnchorPane canvasContainer;
+    private Canvas canvas;
+    @FXML
+    private SplitPane splitPane;
     @FXML
     private Button buttonOpenTests;
     @FXML
@@ -52,12 +54,12 @@ public class RootPresenter implements Initializable {
 
     private TestCaseListController testCaseListController;
 
-    private CanvasController canvasController;
+    private GridCanvasController gridCanvasController;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
-        canvasController = new CanvasController(canvas, canvasContainer,testsController.activeTestCaseProperty());
+        // splitPane.setDividerPositions(0.15f, 0.85f);
+        gridCanvasController = new GridCanvasController(canvas, testsController.activeTestCaseProperty());
 
         testCaseListController = new TestCaseListController(testCaseListView, testsController);
         testFileLabel.textProperty().bind(Bindings
@@ -80,6 +82,14 @@ public class RootPresenter implements Initializable {
             testsController.saveTestsAs(file);
         });
 
+        preloadTest();
+    }
+
+    private void preloadTest() {
+        String testFilePath = System.getenv("preload.test");
+        if (testFilePath != null) {
+            testsController.loadTests(new File(testFilePath));
+        }
     }
 
     private File chooseFile() {

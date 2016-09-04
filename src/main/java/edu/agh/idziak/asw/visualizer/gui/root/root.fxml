@@ -7,32 +7,32 @@
             xmlns="http://javafx.com/javafx/8.0.91" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="edu.agh.idziak.asw.visualizer.gui.root.RootPresenter">
     <center>
-        <AnchorPane fx:id="canvasContainer">
-            <Canvas fx:id="canvas" BorderPane.alignment="TOP_LEFT"/>
-        </AnchorPane>
+        <SplitPane fx:id="splitPane" dividerPositions="0.1,0.9">
+            <BorderPane fx:id="testListBorderPane" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                <top>
+                    <Label fx:id="testFileLabel" text="Test file:" BorderPane.alignment="CENTER"/>
+                </top>
+                <center>
+                    <ListView fx:id="testCaseListView" onMouseClicked="#listViewClicked" prefHeight="200.0"
+                              prefWidth="200.0" BorderPane.alignment="CENTER"/>
+                </center>
+            </BorderPane>
+            <StackPane prefHeight="500" prefWidth="500">
+                <ScrollPane prefWidth="500" prefHeight="500">
+                    <Canvas fx:id="canvas" height="100" width="100"/>
+                </ScrollPane>
+            </StackPane>
+            <VBox prefHeight="100.0" prefWidth="100.0"/>
+        </SplitPane>
     </center>
     <bottom>
         <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-            <items>
-                <Button fx:id="buttonOpenTests" mnemonicParsing="false" text="Open tests"/>
-                <Button fx:id="buttonSaveTests" mnemonicParsing="false" text="Save tests"/>
-                <Button fx:id="buttonSaveTestsAs" mnemonicParsing="false" text="Save tests as..."/>
-                <Button fx:id="buttonExecuteTest" mnemonicParsing="false" text="Execute test"/>
-            </items>
+            <Button fx:id="buttonOpenTests" mnemonicParsing="false" text="Open tests"/>
+            <Button fx:id="buttonSaveTests" mnemonicParsing="false" text="Save tests"/>
+            <Button fx:id="buttonSaveTestsAs" mnemonicParsing="false" text="Save tests as..."/>
+            <Button fx:id="buttonExecuteTest" mnemonicParsing="false" text="Execute test"/>
         </ToolBar>
     </bottom>
     <right>
-        <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER"/>
     </right>
-    <left>
-        <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-            <top>
-                <Label fx:id="testFileLabel" text="Test file:" BorderPane.alignment="CENTER"/>
-            </top>
-            <center>
-                <ListView fx:id="testCaseListView" onMouseClicked="#listViewClicked" prefHeight="200.0"
-                          prefWidth="200.0" BorderPane.alignment="CENTER"/>
-            </center>
-        </BorderPane>
-    </left>
 </BorderPane>

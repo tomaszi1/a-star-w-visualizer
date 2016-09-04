@@ -20,7 +20,14 @@ public class Loader extends Application {
         presenter.initScene(scene);
 
         primaryStage.setScene(scene);
+        optionallyMaximizeWindow(primaryStage);
         primaryStage.show();
+    }
+
+    private static void optionallyMaximizeWindow(Stage primaryStage) {
+        if ("true".equalsIgnoreCase(System.getenv("maximize"))) {
+            primaryStage.setMaximized(true);
+        }
     }
 
     @Override

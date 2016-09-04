@@ -24,4 +24,11 @@ public class ResizableCanvas extends Canvas {
     public double prefHeight(double width) {
         return getHeight();
     }
+
+    @Override
+    public void resize(double width, double height)
+    {
+        super.setWidth(width);
+        super.setHeight(height);
+    }
 }

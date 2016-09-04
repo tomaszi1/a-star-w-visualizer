@@ -13,9 +13,12 @@ public class TestCase {
     private G2DInputPlan inputPlan;
     private OutputPlan<G2DStateSpace, G2DCollectiveState, G2DEntityState, Integer, Double> outputPlan;
     private String name;
+    private boolean lightDefinition;
 
-    public TestCase(G2DInputPlan inputPlan) {
+    public TestCase(String name, G2DInputPlan inputPlan, boolean lightDefinition) {
+        this.name = name;
         this.inputPlan = inputPlan;
+        this.lightDefinition = lightDefinition;
     }
 
     public void setOutputPlan(OutputPlan<G2DStateSpace, G2DCollectiveState, G2DEntityState, Integer, Double>
@@ -37,5 +40,9 @@ public class TestCase {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean isLightDefinition() {
+        return lightDefinition;
     }
 }
