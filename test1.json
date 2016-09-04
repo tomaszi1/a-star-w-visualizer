@@ -2,18 +2,17 @@
   "name" : "test1",
   "stateSpaceRows" : 10,
   "stateSpaceCols" : 10,
-  "entities" : [ 
-  {
+  "entities" : [ {
     "id" : 1,
     "row" : 2,
     "col" : 1,
     "targetRow" : 3,
     "targetCol" : 5
-  },{
+  }, {
     "id" : 2,
     "row" : 4,
     "col" : 4,
-    "targetRow" : 3,
+    "targetRow" : 4,
     "targetCol" : 5
   } ]
 }, {
