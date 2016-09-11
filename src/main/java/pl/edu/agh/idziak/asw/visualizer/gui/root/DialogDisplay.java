@@ -13,4 +13,12 @@ public class DialogDisplay {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
+    public void displayException(String msg, Exception e) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(e.getClass().getSimpleName());
+        alert.setContentText(msg + ": " + e.getMessage());
+        alert.showAndWait();
+    }
 }

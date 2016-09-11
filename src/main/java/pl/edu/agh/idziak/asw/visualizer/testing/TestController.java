@@ -1,10 +1,6 @@
-package pl.edu.agh.idziak.asw.visualizer.gui.root;
+package pl.edu.agh.idziak.asw.visualizer.testing;
 
 import com.google.common.base.Preconditions;
-import pl.edu.agh.idziak.asw.visualizer.testing.TestLoader;
-import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.io.DTOMapper;
-import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.io.TestCaseDTO;
-import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.model.TestCase;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableObjectValue;
@@ -13,8 +9,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.edu.agh.idziak.asw.visualizer.gui.root.DialogDisplay;
+import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.io.DTOMapper;
+import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.io.TestCaseDTO;
+import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.model.TestCase;
 
-import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -24,24 +23,35 @@ import static java.util.stream.Collectors.toList;
 /**
  * Created by Tomasz on 27.08.2016.
  */
-public class TestsController {
-    private static final Logger LOG = LoggerFactory.getLogger(TestsController.class);
+public class TestController {
+    private static final Logger LOG = LoggerFactory.getLogger(TestController.class);
+    private static final String LOG_MESSAGE_TEST_FAILED = "Test failed with an error";
 
-    @Inject
     private TestLoader testLoader;
-
-    @Inject
     private DialogDisplay dialogDisplay;
+    private TestExecutor testExecutor;
 
     private File currentTestsFile;
     private final ObservableList<TestCase> testCases;
     private final SimpleStringProperty activeTestFileNameProperty;
     private final SimpleObjectProperty<TestCase> activeTestCase;
 
-    public TestsController() {
+    public TestController() {
+        testLoader = new TestLoader();
+        dialogDisplay = new DialogDisplay();
         testCases = FXCollections.observableArrayList();
         activeTestFileNameProperty = new SimpleStringProperty();
         activeTestCase = new SimpleObjectProperty<>();
+        testExecutor = new TestExecutor(activeTestCaseProperty());
+    }
+
+    public void executeActiveTest() {
+        try {
+            testExecutor.executeTest();
+        } catch (RuntimeException e) {
+            dialogDisplay.displayException(LOG_MESSAGE_TEST_FAILED, e);
+            LOG.error(LOG_MESSAGE_TEST_FAILED, e);
+        }
     }
 
     public void loadTests(File newTestsFile) {
@@ -90,15 +100,15 @@ public class TestsController {
         testLoader.writeTestsFile(file, testCaseDTOs);
     }
 
-    ObservableStringValue getActiveTestFileNameProperty() {
+    public ObservableStringValue getActiveTestFileNameProperty() {
         return activeTestFileNameProperty;
     }
 
-    ObservableObjectValue<TestCase> activeTestCaseProperty() {
+    public ObservableObjectValue<TestCase> activeTestCaseProperty() {
         return activeTestCase;
     }
 
-    void setActiveTestCase(TestCase testCase) {
+    public void setActiveTestCase(TestCase testCase) {
         Preconditions.checkArgument(testCases.contains(testCase), "Given test case is not in current test set");
         activeTestCase.set(testCase);
     }

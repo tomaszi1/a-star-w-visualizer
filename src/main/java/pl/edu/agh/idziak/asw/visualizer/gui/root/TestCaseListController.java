@@ -1,5 +1,6 @@
 package pl.edu.agh.idziak.asw.visualizer.gui.root;
 
+import pl.edu.agh.idziak.asw.visualizer.testing.TestController;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.model.TestCase;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -13,16 +14,16 @@ public class TestCaseListController {
 
     private ListView<TestCase> listView;
 
-    private TestsController testsController;
+    private TestController testController;
 
-    public TestCaseListController(ListView<TestCase> listView, TestsController testsController) {
+    public TestCaseListController(ListView<TestCase> listView, TestController testController) {
         this.listView = listView;
-        this.testsController = testsController;
-        listView.setItems(testsController.getTestCases());
+        this.testController = testController;
+        listView.setItems(testController.getTestCases());
         listView.setCellFactory(buildCellFactory());
     }
 
-    private Callback<ListView<TestCase>, ListCell<TestCase>> buildCellFactory() {
+    private static Callback<ListView<TestCase>, ListCell<TestCase>> buildCellFactory() {
         return new Callback<ListView<TestCase>, ListCell<TestCase>>() {
             @Override
             public ListCell<TestCase> call(ListView<TestCase> param) {
@@ -46,6 +47,6 @@ public class TestCaseListController {
         if (selectedTestCase == null) {
             return;
         }
-        testsController.setActiveTestCase(selectedTestCase);
+        testController.setActiveTestCase(selectedTestCase);
     }
 }

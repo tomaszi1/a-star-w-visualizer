@@ -5,15 +5,15 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SplitPane;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
+import javafx.stage.Window;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.edu.agh.idziak.asw.visualizer.gui.editpanel.EditPanelController;
+import pl.edu.agh.idziak.asw.visualizer.testing.TestController;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.model.TestCase;
 
 import javax.inject.Inject;
@@ -26,12 +26,11 @@ import java.util.ResourceBundle;
  */
 public class RootPresenter implements Initializable {
     private static final Logger LOG = LoggerFactory.getLogger(RootPresenter.class);
+
     @FXML
     private BorderPane testListBorderPane;
     @FXML
     private Label testFileLabel;
-    @FXML
-    private SpacePane spacePane;
     @FXML
     private BorderPane rootBorderPane;
     @FXML
@@ -45,53 +44,65 @@ public class RootPresenter implements Initializable {
     @FXML
     private Button buttonSaveTestsAs;
     @FXML
-    private Button buttonExecuteTest;
+    private Button buttonExecuteTests;
     @FXML
     private ListView<TestCase> testCaseListView;
-
-    private Scene scene;
+    @FXML
+    private Window window;
+    @FXML
+    private EditPanelController editPanelController;
 
     @Inject
-    private TestsController testsController;
+    private TestController testController;
 
     private TestCaseListController testCaseListController;
 
     private GridCanvasController gridCanvasController;
 
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // splitPane.setDividerPositions(0.15f, 0.85f);
-        gridCanvasController = new GridCanvasController(canvas, testsController.activeTestCaseProperty());
+        gridCanvasController = new GridCanvasController(canvas, testController.activeTestCaseProperty());
 
-        testCaseListController = new TestCaseListController(testCaseListView, testsController);
+        initializeTestCaseList();
+        initializeButtons();
+        preloadTest();
+    }
+
+    private void initializeTestCaseList() {
+        testCaseListController = new TestCaseListController(testCaseListView, testController);
         testFileLabel.textProperty().bind(Bindings
                 .concat("Test file: ")
-                .concat(testsController.getActiveTestFileNameProperty()));
+                .concat(testController.getActiveTestFileNameProperty()));
+    }
 
+    private void initializeButtons() {
         buttonOpenTests.setOnAction(event -> {
             File file = chooseFile();
             if (file == null) return;
-            testsController.loadTests(file);
+            testController.loadTests(file);
         });
 
         buttonSaveTests.setOnAction(event -> {
-            testsController.saveTests();
+            testController.saveTests();
         });
 
         buttonSaveTestsAs.setOnAction(event -> {
             File file = chooseFile();
             if (file == null) return;
-            testsController.saveTestsAs(file);
+            testController.saveTestsAs(file);
         });
 
-        preloadTest();
+        buttonExecuteTests.setOnAction(event -> {
+            testController.executeActiveTest();
+        });
     }
 
     private void preloadTest() {
         String testFilePath = System.getenv("preload.test");
         if (testFilePath != null) {
             LOG.info("Preloading test file: " + testFilePath);
-            testsController.loadTests(new File(testFilePath));
+            testController.loadTests(new File(testFilePath));
         }
     }
 
@@ -99,7 +110,7 @@ public class RootPresenter implements Initializable {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Choose JSON tests file");
         fileChooser.setInitialDirectory(new File("."));
-        return fileChooser.showOpenDialog(scene.getWindow());
+        return fileChooser.showOpenDialog(window);
     }
 
     @FXML
@@ -108,7 +119,6 @@ public class RootPresenter implements Initializable {
     }
 
     public void initScene(Scene scene) {
-        this.scene = scene;
         rootBorderPane.prefHeightProperty().bind(scene.heightProperty());
         rootBorderPane.prefWidthProperty().bind(scene.widthProperty());
     }

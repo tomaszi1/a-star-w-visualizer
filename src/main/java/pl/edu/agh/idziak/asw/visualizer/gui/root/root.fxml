@@ -18,19 +18,19 @@
                 </center>
             </BorderPane>
             <StackPane prefHeight="500" prefWidth="500">
-                <ScrollPane prefWidth="500" prefHeight="500">
+                <ScrollPane prefWidth="500" prefHeight="500" fx:id="canvasScrollPane">
                     <Canvas fx:id="canvas" height="100" width="100"/>
                 </ScrollPane>
             </StackPane>
-            <VBox prefHeight="100.0" prefWidth="100.0"/>
+            <fx:include source="../editpanel/editPanel.fxml" />
         </SplitPane>
     </center>
     <bottom>
         <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-            <Button fx:id="buttonOpenTests" mnemonicParsing="false" text="Open tests"/>
-            <Button fx:id="buttonSaveTests" mnemonicParsing="false" text="Save tests"/>
-            <Button fx:id="buttonSaveTestsAs" mnemonicParsing="false" text="Save tests as..."/>
-            <Button fx:id="buttonExecuteTest" mnemonicParsing="false" text="Execute test"/>
+            <Button fx:id="buttonOpenTests" text="Open tests"/>
+            <Button fx:id="buttonSaveTests" text="Save tests"/>
+            <Button fx:id="buttonSaveTestsAs" text="Save tests as..."/>
+            <Button fx:id="buttonExecuteTests" text="Execute test"/>
         </ToolBar>
     </bottom>
     <right>
