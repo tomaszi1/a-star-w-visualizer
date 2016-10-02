@@ -1,4 +1,4 @@
-package pl.edu.agh.idziak.asw.visualizer.gui.drawing;
+package pl.edu.agh.idziak.asw.visualizer.gui.drawing.devzone;
 
 import javafx.scene.canvas.GraphicsContext;
 

@@ -1,4 +1,4 @@
-package pl.edu.agh.idziak.asw.visualizer.gui.drawing;
+package pl.edu.agh.idziak.asw.visualizer.gui.drawing.devzone;
 
 import com.google.common.collect.Iterables;
 import javafx.scene.canvas.GraphicsContext;

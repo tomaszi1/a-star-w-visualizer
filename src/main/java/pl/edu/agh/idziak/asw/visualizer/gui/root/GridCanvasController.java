@@ -15,7 +15,7 @@ import pl.edu.agh.idziak.asw.OutputPlan;
 import pl.edu.agh.idziak.asw.grid2d.G2DCollectiveState;
 import pl.edu.agh.idziak.asw.grid2d.G2DEntityState;
 import pl.edu.agh.idziak.asw.grid2d.G2DStateSpace;
-import pl.edu.agh.idziak.asw.visualizer.gui.drawing.DevZoneCellDrawingDelegate;
+import pl.edu.agh.idziak.asw.visualizer.gui.drawing.devzone.DevZoneCellDrawingDelegate;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.model.Entity;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.model.TestCase;
 import pl.edu.agh.idziak.common.UntypedTwoMapsIterator;
@@ -28,8 +28,9 @@ import java.util.List;
  */
 public class GridCanvasController {
     private static final Logger LOG = LoggerFactory.getLogger(GridCanvasController.class);
-    private static final int CELL_WIDTH = 40;
-    private static final int ENTITY_WIDTH = CELL_WIDTH * 2 / 3;
+    private static final int NORMAL_CELL_WIDTH = 40;
+    private double scaleFactor = 1;
+    private int entityWidth = getCellWidth() * 2 / 3;
     private Canvas canvas;
     private CanvasMouseEventsDispatcher canvasMouseEventsDispatcher;
     private TestCase currentTestCase;
@@ -60,8 +61,8 @@ public class GridCanvasController {
         canvasMouseEventsDispatcher.cellClicked(rowIndex, colIndex);
     }
 
-    private static int getIndexForPosition(int pos) {
-        return pos / CELL_WIDTH;
+    private int getIndexForPosition(int pos) {
+        return pos / getCellWidth();
     }
 
     private void repaint() {
@@ -113,7 +114,7 @@ public class GridCanvasController {
         int leftX = getTopPosForIndex(state.getCol());
         int rightX = getTopPosForIndex(state.getCol() + 1);
 
-        clipRect(gc, leftX, topY, CELL_WIDTH, CELL_WIDTH);
+        clipRect(gc, leftX + 1, topY - 1, getCellWidth() - 2, getCellWidth() - 2);
 
         devZoneCellDrawingDelegate.setCellBounds(topY, leftX, bottomY, rightX);
         devZoneCellDrawingDelegate.drawDevZone(gc);
@@ -127,29 +128,29 @@ public class GridCanvasController {
         gc.clip();
     }
 
-    private static int getTopPosForIndex(int index) {
-        return index * CELL_WIDTH;
+    private int getTopPosForIndex(int index) {
+        return index * getCellWidth();
     }
 
     private void drawStateSpace(GraphicsContext gc, G2DStateSpace stateSpace) {
         int rows = stateSpace.getRows();
         int cols = stateSpace.getCols();
 
-        canvas.setWidth(CELL_WIDTH * cols);
-        canvas.setHeight(CELL_WIDTH * rows);
+        canvas.setWidth(getCellWidth() * cols);
+        canvas.setHeight(getCellWidth() * rows);
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
         gc.setStroke(Color.BLACK);
         gc.setLineWidth(1);
 
         for (int curRow = 0; curRow <= rows; curRow++) {
-            int yPos = curRow * CELL_WIDTH;
-            gc.strokeLine(0, yPos, cols * CELL_WIDTH, yPos);
+            int yPos = curRow * getCellWidth();
+            gc.strokeLine(0, yPos, cols * getCellWidth(), yPos);
         }
 
         for (int curCol = 0; curCol <= cols; curCol++) {
-            int xPos = curCol * CELL_WIDTH;
-            gc.strokeLine(xPos, 0, xPos, rows * CELL_WIDTH);
+            int xPos = curCol * getCellWidth();
+            gc.strokeLine(xPos, 0, xPos, rows * getCellWidth());
         }
     }
 
@@ -163,7 +164,7 @@ public class GridCanvasController {
         }
     }
 
-    private static void drawPathFragments(G2DCollectiveState first, G2DCollectiveState second, GraphicsContext gc) {
+    private void drawPathFragments(G2DCollectiveState first, G2DCollectiveState second, GraphicsContext gc) {
         UntypedTwoMapsIterator<G2DEntityState> it =
                 new UntypedTwoMapsIterator<>(first.getEntityStates(), second.getEntityStates());
 
@@ -173,7 +174,7 @@ public class GridCanvasController {
         }
     }
 
-    private static void drawPathFragment(G2DEntityState first, G2DEntityState second, GraphicsContext gc) {
+    private void drawPathFragment(G2DEntityState first, G2DEntityState second, GraphicsContext gc) {
         gc.save();
         gc.setStroke(Color.BLACK);
         gc.setLineWidth(1);
@@ -184,11 +185,11 @@ public class GridCanvasController {
         gc.restore();
     }
 
-    private static int getCenterPosForIndex(int pos) {
-        return getTopPosForIndex(pos) + CELL_WIDTH / 2;
+    private int getCenterPosForIndex(int pos) {
+        return getTopPosForIndex(pos) + getCellWidth() / 2;
     }
 
-    private static void drawEntities(GraphicsContext gc, TestCase testCase) {
+    private void drawEntities(GraphicsContext gc, TestCase testCase) {
         testCase.getInputPlan()
                 .getInitialCollectiveState()
                 .getEntityStates()
@@ -201,14 +202,14 @@ public class GridCanvasController {
                 .forEach(entry -> drawTargetEntityState(entry.getKey(), entry.getValue(), gc));
     }
 
-    private static void drawTargetEntityState(Object entity, G2DEntityState state, GraphicsContext gc) {
+    private void drawTargetEntityState(Object entity, G2DEntityState state, GraphicsContext gc) {
         gc.save();
         int leftX = getTopPosForIndex(state.getCol());
         int topY = getTopPosForIndex(state.getRow());
 
         gc.setFill(Color.LIGHTBLUE);
-        int entityRectOffset = (CELL_WIDTH - ENTITY_WIDTH) / 2;
-        gc.fillRect(leftX + entityRectOffset, topY + entityRectOffset, ENTITY_WIDTH, ENTITY_WIDTH);
+        int entityRectOffset = (getCellWidth() - entityWidth) / 2;
+        gc.fillRect(leftX + entityRectOffset, topY + entityRectOffset, entityWidth, entityWidth);
 
         gc.setTextAlign(TextAlignment.CENTER);
         gc.setTextBaseline(VPos.CENTER);
@@ -218,22 +219,22 @@ public class GridCanvasController {
             gc.setFont(Font.font(20));
             gc.fillText(
                     ((Entity) entity).getId().toString(),
-                    leftX + CELL_WIDTH / 2,
-                    topY + CELL_WIDTH / 2
+                    leftX + getCellWidth() / 2,
+                    topY + getCellWidth() / 2
             );
         }
 
         gc.restore();
     }
 
-    private static void drawInitialEntityState(Object entity, G2DEntityState state, GraphicsContext gc) {
+    private void drawInitialEntityState(Object entity, G2DEntityState state, GraphicsContext gc) {
         gc.save();
-        int leftX = CELL_WIDTH * state.getCol();
-        int topY = CELL_WIDTH * state.getRow();
+        int leftX = getCellWidth() * state.getCol();
+        int topY = getCellWidth() * state.getRow();
 
         gc.setFill(Color.ORANGE);
-        int entityRectOffset = (CELL_WIDTH - ENTITY_WIDTH) / 2;
-        gc.fillRect(leftX + entityRectOffset, topY + entityRectOffset, ENTITY_WIDTH, ENTITY_WIDTH);
+        int entityRectOffset = (getCellWidth() - entityWidth) / 2;
+        gc.fillRect(leftX + entityRectOffset, topY + entityRectOffset, entityWidth, entityWidth);
 
         gc.setTextAlign(TextAlignment.CENTER);
         gc.setTextBaseline(VPos.CENTER);
@@ -243,12 +244,28 @@ public class GridCanvasController {
             gc.setFont(Font.font(20));
             gc.fillText(
                     ((Entity) entity).getId().toString(),
-                    leftX + CELL_WIDTH / 2,
-                    topY + CELL_WIDTH / 2
+                    leftX + getCellWidth() / 2,
+                    topY + getCellWidth() / 2
             );
         }
 
         gc.restore();
     }
 
+    void scaleUp() {
+        scaleFactor = scaleFactor * 5 / 4;
+        repaint();
+    }
+
+    void scaleDown() {
+        if (getCellWidth() < 10) {
+            return;
+        }
+        scaleFactor = scaleFactor * 4 / 5;
+        repaint();
+    }
+
+    private int getCellWidth() {
+        return (int) (NORMAL_CELL_WIDTH * scaleFactor);
+    }
 }
