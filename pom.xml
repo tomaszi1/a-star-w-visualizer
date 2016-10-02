@@ -14,7 +14,6 @@
             <artifactId>a-star-w-algorithm</artifactId>
             <version>0.1-ALPHA</version>
         </dependency>
-
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>

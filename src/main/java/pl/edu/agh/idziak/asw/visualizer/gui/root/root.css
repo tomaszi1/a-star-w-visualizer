@@ -6,3 +6,7 @@
 #canvasScrollPane {
     -fx-background-color: white;
 }
+
+#editPanel {
+    -fx-background-color: red;
+}

@@ -5,6 +5,7 @@ import javafx.beans.value.ObservableObjectValue;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
@@ -14,6 +15,7 @@ import pl.edu.agh.idziak.asw.OutputPlan;
 import pl.edu.agh.idziak.asw.grid2d.G2DCollectiveState;
 import pl.edu.agh.idziak.asw.grid2d.G2DEntityState;
 import pl.edu.agh.idziak.asw.grid2d.G2DStateSpace;
+import pl.edu.agh.idziak.asw.visualizer.gui.drawing.DevZoneCellDrawingDelegate;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.model.Entity;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.model.TestCase;
 import pl.edu.agh.idziak.common.UntypedTwoMapsIterator;
@@ -29,13 +31,18 @@ public class GridCanvasController {
     private static final int CELL_WIDTH = 40;
     private static final int ENTITY_WIDTH = CELL_WIDTH * 2 / 3;
     private Canvas canvas;
+    private CanvasMouseEventsDispatcher canvasMouseEventsDispatcher;
     private TestCase currentTestCase;
     private final ChangeListener<OutputPlan<G2DStateSpace, G2DCollectiveState, G2DEntityState, Integer, Double>> outputPlanChangeListener
             = (obs, oldVal, newVal) -> repaint();
+    private DevZoneCellDrawingDelegate devZoneCellDrawingDelegate;
 
     public GridCanvasController(Canvas canvas, ObservableObjectValue<TestCase>
-            testCaseObjectProperty) {
+            testCaseObjectProperty, CanvasMouseEventsDispatcher canvasMouseEventsDispatcher) {
         this.canvas = canvas;
+        this.canvasMouseEventsDispatcher = canvasMouseEventsDispatcher;
+        devZoneCellDrawingDelegate = new DevZoneCellDrawingDelegate();
+
         testCaseObjectProperty.addListener((observable, oldValue, newTestCase) -> {
             if (currentTestCase != null) {
                 currentTestCase.outputPlanProperty().removeListener(outputPlanChangeListener);
@@ -43,6 +50,18 @@ public class GridCanvasController {
             drawTestCase(newTestCase);
             currentTestCase.outputPlanProperty().addListener(outputPlanChangeListener);
         });
+
+        canvas.setOnMouseClicked(this::handleCanvasClicked);
+    }
+
+    private void handleCanvasClicked(MouseEvent event) {
+        int colIndex = getIndexForPosition((int) event.getX());
+        int rowIndex = getIndexForPosition((int) event.getY());
+        canvasMouseEventsDispatcher.cellClicked(rowIndex, colIndex);
+    }
+
+    private static int getIndexForPosition(int pos) {
+        return pos / CELL_WIDTH;
     }
 
     private void repaint() {
@@ -69,19 +88,26 @@ public class GridCanvasController {
         drawDeviationZones(gc, testCase);
     }
 
-    private static void drawDeviationZones(GraphicsContext gc, TestCase testCase) {
+    private void drawDeviationZones(GraphicsContext gc, TestCase testCase) {
         if (testCase.outputPlanProperty().isNull().get()) {
             return;
         }
 
-        testCase.outputPlanProperty().get().getDeviationZonePlans().forEach(devZonePlan ->
-                devZonePlan.getDeviationZone().getStates().forEach(entityState ->
-                        drawDevZoneState(gc, entityState)));
+        devZoneCellDrawingDelegate.resetState();
+
+        testCase.outputPlanProperty()
+                .get()
+                .getDeviationZonePlans()
+                .forEach(devZonePlan -> {
+                    devZoneCellDrawingDelegate.switchPattern();
+                    devZonePlan.getDeviationZone()
+                            .getStates()
+                            .forEach(entityState -> drawDevZoneState(gc, entityState));
+                });
     }
 
-    private static void drawDevZoneState(GraphicsContext gc, G2DEntityState state) {
+    private void drawDevZoneState(GraphicsContext gc, G2DEntityState state) {
         gc.save();
-
         int topY = getTopPosForIndex(state.getRow());
         int bottomY = getTopPosForIndex(state.getRow() + 1);
         int leftX = getTopPosForIndex(state.getCol());
@@ -89,23 +115,8 @@ public class GridCanvasController {
 
         clipRect(gc, leftX, topY, CELL_WIDTH, CELL_WIDTH);
 
-        int linesInBetween = 4;
-        double spaceBetweenLines = (double) CELL_WIDTH / linesInBetween;
-
-        gc.setStroke(Color.GREY);
-        gc.setLineWidth(0.3);
-        for (int i = 0; i < linesInBetween; i++) {
-            double y1 = topY + spaceBetweenLines * (i + 1);
-            double x2 = leftX + spaceBetweenLines * (i + 1);
-            gc.strokeLine(leftX, y1, x2, topY);
-        }
-
-        for (int i = 0; i < linesInBetween; i++) {
-            double y2 = topY + spaceBetweenLines * (i + 1);
-            double x1 = leftX + spaceBetweenLines * (i + 1);
-            gc.strokeLine(x1, bottomY, rightX, y2);
-        }
-
+        devZoneCellDrawingDelegate.setCellBounds(topY, leftX, bottomY, rightX);
+        devZoneCellDrawingDelegate.drawDevZone(gc);
         gc.restore();
     }
 
@@ -219,10 +230,6 @@ public class GridCanvasController {
         gc.save();
         int leftX = CELL_WIDTH * state.getCol();
         int topY = CELL_WIDTH * state.getRow();
-        /*gc.beginPath();
-        gc.rect(leftX, topY, leftX + CELL_WIDTH, topY + CELL_WIDTH);
-        gc.closePath();
-        gc.clip();*/
 
         gc.setFill(Color.ORANGE);
         int entityRectOffset = (CELL_WIDTH - ENTITY_WIDTH) / 2;
@@ -242,11 +249,6 @@ public class GridCanvasController {
         }
 
         gc.restore();
-    }
-
-    private void debugFillCanvas(GraphicsContext gc) {
-        canvas.getGraphicsContext2D().setFill(Color.GREEN);
-        canvas.getGraphicsContext2D().fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
     }
 
 }

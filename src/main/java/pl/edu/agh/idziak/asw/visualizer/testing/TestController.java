@@ -65,11 +65,8 @@ public class TestController {
 
     private void unsafeLoadTests(File newTestsFile) throws IOException {
         List<TestCaseDTO> testCaseDTOs = testLoader.openTestsFile(newTestsFile);
-
         List<TestCase> newTestCases = testCaseDTOs.stream().map(DTOMapper::dtoToInternal).collect(toList());
-
         this.testCases.setAll(newTestCases);
-
         currentTestsFile = newTestsFile;
         activeTestFileNameProperty.set(currentTestsFile.getName());
     }
@@ -111,5 +108,9 @@ public class TestController {
     public void setActiveTestCase(TestCase testCase) {
         Preconditions.checkArgument(testCases.contains(testCase), "Given test case is not in current test set");
         activeTestCase.set(testCase);
+    }
+
+    public void reloadTests() {
+        loadTests(currentTestsFile);
     }
 }

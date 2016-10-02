@@ -22,12 +22,13 @@
                     <Canvas fx:id="canvas" height="100" width="100"/>
                 </ScrollPane>
             </StackPane>
-            <fx:include source="../editpanel/editPanel.fxml" />
+            <fx:include source="../editpanel/editPanel.fxml"/>
         </SplitPane>
     </center>
     <bottom>
         <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
             <Button fx:id="buttonOpenTests" text="Open tests"/>
+            <Button fx:id="buttonReloadTests" text="Reload tests"/>
             <Button fx:id="buttonSaveTests" text="Save tests"/>
             <Button fx:id="buttonSaveTestsAs" text="Save tests as..."/>
             <Button fx:id="buttonExecuteTests" text="Execute test"/>

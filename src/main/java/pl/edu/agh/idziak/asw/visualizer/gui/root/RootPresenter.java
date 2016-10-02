@@ -27,30 +27,19 @@ import java.util.ResourceBundle;
 public class RootPresenter implements Initializable {
     private static final Logger LOG = LoggerFactory.getLogger(RootPresenter.class);
 
-    @FXML
-    private BorderPane testListBorderPane;
-    @FXML
-    private Label testFileLabel;
-    @FXML
-    private BorderPane rootBorderPane;
-    @FXML
-    private Canvas canvas;
-    @FXML
-    private SplitPane splitPane;
-    @FXML
-    private Button buttonOpenTests;
-    @FXML
-    private Button buttonSaveTests;
-    @FXML
-    private Button buttonSaveTestsAs;
-    @FXML
-    private Button buttonExecuteTests;
-    @FXML
-    private ListView<TestCase> testCaseListView;
-    @FXML
-    private Window window;
-    @FXML
-    private EditPanelController editPanelController;
+    @FXML private BorderPane testListBorderPane;
+    @FXML private Label testFileLabel;
+    @FXML private BorderPane rootBorderPane;
+    @FXML private Canvas canvas;
+    @FXML private SplitPane splitPane;
+    @FXML private Button buttonReloadTests;
+    @FXML private Button buttonOpenTests;
+    @FXML private Button buttonSaveTests;
+    @FXML private Button buttonSaveTestsAs;
+    @FXML private Button buttonExecuteTests;
+    @FXML private ListView<TestCase> testCaseListView;
+    @FXML private Window window;
+    @FXML private EditPanelController editPanelController;
 
     @Inject
     private TestController testController;
@@ -62,8 +51,10 @@ public class RootPresenter implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        gridCanvasController = new GridCanvasController(canvas, testController.activeTestCaseProperty());
-
+        CanvasMouseEventsDispatcher canvasMouseEventsDispatcher = new CanvasMouseEventsDispatcher();
+        gridCanvasController = new GridCanvasController(canvas,
+                testController.activeTestCaseProperty(),
+                canvasMouseEventsDispatcher);
         initializeTestCaseList();
         initializeButtons();
         preloadTest();
@@ -77,25 +68,23 @@ public class RootPresenter implements Initializable {
     }
 
     private void initializeButtons() {
-        buttonOpenTests.setOnAction(event -> {
-            File file = chooseFile();
-            if (file == null) return;
-            testController.loadTests(file);
-        });
+        buttonOpenTests.setOnAction(event -> buttonOpenTestsClicked());
+        buttonSaveTests.setOnAction(event -> testController.saveTests());
+        buttonSaveTestsAs.setOnAction(event -> buttonSaveTestsAsClicked());
+        buttonExecuteTests.setOnAction(event -> testController.executeActiveTest());
+        buttonReloadTests.setOnAction(event -> testController.reloadTests());
+    }
 
-        buttonSaveTests.setOnAction(event -> {
-            testController.saveTests();
-        });
+    private void buttonSaveTestsAsClicked() {
+        File file = chooseFile();
+        if (file == null) return;
+        testController.saveTestsAs(file);
+    }
 
-        buttonSaveTestsAs.setOnAction(event -> {
-            File file = chooseFile();
-            if (file == null) return;
-            testController.saveTestsAs(file);
-        });
-
-        buttonExecuteTests.setOnAction(event -> {
-            testController.executeActiveTest();
-        });
+    private void buttonOpenTestsClicked() {
+        File file = chooseFile();
+        if (file == null) return;
+        testController.loadTests(file);
     }
 
     private void preloadTest() {
