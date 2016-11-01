@@ -99,10 +99,10 @@ public class GridCanvasController {
                 .get()
                 .getDeviationZonePlans()
                 .forEach(devZonePlan -> {
-                    devZoneCellDrawingDelegate.switchPattern();
                     devZonePlan.getDeviationZone()
                             .getStates()
                             .forEach(entityState -> drawDevZoneState(gc, entityState));
+                    devZoneCellDrawingDelegate.switchPattern();
                 });
     }
 

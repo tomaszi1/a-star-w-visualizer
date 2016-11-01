@@ -13,6 +13,7 @@ import pl.edu.agh.idziak.asw.visualizer.gui.root.DialogDisplay;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.io.DTOMapper;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.io.TestCaseDTO;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.model.TestCase;
+import pl.edu.agh.idziak.common.Statistics;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,12 +27,12 @@ import static java.util.stream.Collectors.toList;
 public class TestController {
     private static final Logger LOG = LoggerFactory.getLogger(TestController.class);
     private static final String LOG_MESSAGE_TEST_FAILED = "Test failed with an error";
-
     private TestLoader testLoader;
+
     private DialogDisplay dialogDisplay;
     private TestExecutor testExecutor;
-
     private File currentTestsFile;
+
     private final ObservableList<TestCase> testCases;
     private final SimpleStringProperty activeTestFileNameProperty;
     private final SimpleObjectProperty<TestCase> activeTestCase;
@@ -42,7 +43,7 @@ public class TestController {
         testCases = FXCollections.observableArrayList();
         activeTestFileNameProperty = new SimpleStringProperty();
         activeTestCase = new SimpleObjectProperty<>();
-        testExecutor = new TestExecutor(activeTestCaseProperty());
+        testExecutor = new TestExecutor(activeTestCaseProperty(), executionObserver);
     }
 
     public void executeActiveTest() {
@@ -71,10 +72,10 @@ public class TestController {
         activeTestFileNameProperty.set(currentTestsFile.getName());
     }
 
-
     public ObservableList<TestCase> getTestCases() {
         return testCases;
     }
+
 
     public void saveTestsAs(File file) {
         try {
@@ -113,4 +114,17 @@ public class TestController {
     public void reloadTests() {
         loadTests(currentTestsFile);
     }
+
+    public ObservableObjectValue<Statistics> statisticsProperty(){
+        return testExecutor.statisticsProperty();
+    }
+
+    private final ExecutionObserver executionObserver = new ExecutionObserver() {
+        @Override public void executionFailed(Throwable e) {
+            dialogDisplay.displayException("Test execution failed", e);
+        }
+
+        @Override public void executionSucceeded(TestCase testCase) {
+        }
+    };
 }

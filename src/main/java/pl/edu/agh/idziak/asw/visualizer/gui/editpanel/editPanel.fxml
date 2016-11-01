@@ -7,7 +7,8 @@
 <?import javafx.geometry.Insets?>
 <BorderPane fx:id="editPanel" prefHeight="200" prefWidth="200"
             xmlns="http://javafx.com/javafx/8.0.91" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="pl.edu.agh.idziak.asw.visualizer.gui.editpanel.EditPanelController" maxWidth="200" minWidth="170">
+            fx:controller="pl.edu.agh.idziak.asw.visualizer.gui.editpanel.EditPanelController" maxWidth="200"
+            minWidth="170">
     <center>
         <ScrollPane>
             <GridPane vgap="5" hgap="5" prefWidth="190">
@@ -31,6 +32,9 @@
                        text="State space height:"/>
                 <TextField GridPane.rowIndex="4" GridPane.columnIndex="1"
                            prefWidth="40"/>
+                <Separator GridPane.rowIndex="5" GridPane.columnIndex="0" GridPane.columnSpan="2"/>
+                <Label text="Statistics:" GridPane.rowIndex="6" GridPane.columnIndex="0" GridPane.columnSpan="2" />
+                <Label fx:id="labelStatistics" GridPane.rowIndex="7" GridPane.columnSpan="2" />
             </GridPane>
         </ScrollPane>
     </center>

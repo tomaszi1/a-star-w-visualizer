@@ -14,7 +14,7 @@ public class DialogDisplay {
         alert.showAndWait();
     }
 
-    public void displayException(String msg, Exception e) {
+    public void displayException(String msg, Throwable e) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
         alert.setHeaderText(e.getClass().getSimpleName());
