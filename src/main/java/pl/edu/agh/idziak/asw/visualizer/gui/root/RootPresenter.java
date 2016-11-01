@@ -26,17 +26,16 @@ import java.util.ResourceBundle;
  */
 public class RootPresenter implements Initializable {
     private static final Logger LOG = LoggerFactory.getLogger(RootPresenter.class);
+    private static final String ENV_VAR_PRELOAD_TEST = "preload.test";
 
-    @FXML private BorderPane testListBorderPane;
     @FXML private Label testFileLabel;
     @FXML private BorderPane rootBorderPane;
     @FXML private Canvas canvas;
-    @FXML private SplitPane splitPane;
     @FXML private Button buttonReloadTests;
     @FXML private Button buttonOpenTests;
-    @FXML private Button buttonSaveTests;
-    @FXML private Button buttonSaveTestsAs;
     @FXML private Button buttonExecuteTests;
+    @FXML private Button buttonScaleUp;
+    @FXML private Button buttonScaleDown;
     @FXML private ListView<TestCase> testCaseListView;
     @FXML private Window window;
     @FXML private EditPanelController editPanelController;
@@ -69,10 +68,10 @@ public class RootPresenter implements Initializable {
 
     private void initializeButtons() {
         buttonOpenTests.setOnAction(event -> buttonOpenTestsClicked());
-        buttonSaveTests.setOnAction(event -> testController.saveTests());
-        buttonSaveTestsAs.setOnAction(event -> buttonSaveTestsAsClicked());
         buttonExecuteTests.setOnAction(event -> testController.executeActiveTest());
         buttonReloadTests.setOnAction(event -> testController.reloadTests());
+        buttonScaleDown.setOnAction(event -> gridCanvasController.scaleDown());
+        buttonScaleUp.setOnAction(event -> gridCanvasController.scaleUp());
     }
 
     private void buttonSaveTestsAsClicked() {
@@ -88,11 +87,13 @@ public class RootPresenter implements Initializable {
     }
 
     private void preloadTest() {
-        String testFilePath = System.getenv("preload.test");
-        if (testFilePath != null) {
-            LOG.info("Preloading test file: " + testFilePath);
-            testController.loadTests(new File(testFilePath));
+        String testFilePath = System.getProperty(ENV_VAR_PRELOAD_TEST, System.getenv(ENV_VAR_PRELOAD_TEST));
+        if (testFilePath == null) {
+            LOG.info("No tests to preload, for preloading use system/env var: " + ENV_VAR_PRELOAD_TEST);
+            return;
         }
+        LOG.info("Preloading test file: " + testFilePath);
+        testController.loadTests(new File(testFilePath));
     }
 
     private File chooseFile() {

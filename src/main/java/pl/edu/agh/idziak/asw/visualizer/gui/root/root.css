@@ -3,7 +3,7 @@
     -fx-background-color: transparent;
 }
 
-#canvasScrollPane {
+.scroll-pane {
     -fx-background-color: white;
 }
 

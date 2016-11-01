@@ -7,8 +7,8 @@
             xmlns="http://javafx.com/javafx/8.0.91" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="pl.edu.agh.idziak.asw.visualizer.gui.root.RootPresenter">
     <center>
-        <SplitPane fx:id="splitPane" dividerPositions="0.1,0.9">
-            <BorderPane fx:id="testListBorderPane" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+        <SplitPane dividerPositions="0.1,0.9">
+            <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                 <top>
                     <Label fx:id="testFileLabel" text="Test file:" BorderPane.alignment="CENTER"/>
                 </top>
@@ -18,7 +18,7 @@
                 </center>
             </BorderPane>
             <StackPane prefHeight="500" prefWidth="500">
-                <ScrollPane prefWidth="500" prefHeight="500" fx:id="canvasScrollPane">
+                <ScrollPane prefWidth="500" prefHeight="500">
                     <Canvas fx:id="canvas" height="100" width="100"/>
                 </ScrollPane>
             </StackPane>
@@ -29,11 +29,9 @@
         <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
             <Button fx:id="buttonOpenTests" text="Open tests"/>
             <Button fx:id="buttonReloadTests" text="Reload tests"/>
-            <Button fx:id="buttonSaveTests" text="Save tests"/>
-            <Button fx:id="buttonSaveTestsAs" text="Save tests as..."/>
             <Button fx:id="buttonExecuteTests" text="Execute test"/>
+            <Button fx:id="buttonScaleUp" text="Scale up"/>
+            <Button fx:id="buttonScaleDown" text="Scale down"/>
         </ToolBar>
     </bottom>
-    <right>
-    </right>
 </BorderPane>
