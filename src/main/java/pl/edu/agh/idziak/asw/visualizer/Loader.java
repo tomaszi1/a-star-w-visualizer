@@ -2,6 +2,7 @@ package pl.edu.agh.idziak.asw.visualizer;
 
 import com.airhacks.afterburner.injection.Injector;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
@@ -26,6 +27,7 @@ public class Loader extends Application {
         primaryStage.setScene(scene);
         optionallyMaximizeWindow(primaryStage);
         primaryStage.show();
+        primaryStage.setOnCloseRequest(event -> Platform.exit());
     }
 
     private static void optionallyMaximizeWindow(Stage primaryStage) {

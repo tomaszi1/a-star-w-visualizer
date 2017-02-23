@@ -1,7 +1,5 @@
 package pl.edu.agh.idziak.asw.visualizer.testing.grid2d.model;
 
-import com.google.common.base.MoreObjects;
-
 /**
  * Created by Tomasz on 27.08.2016.
  */
@@ -22,9 +20,7 @@ public class Entity {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("id", id)
-                .toString();
+        return "E" + id;
     }
 
     public static final class Builder {

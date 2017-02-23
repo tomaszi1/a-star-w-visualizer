@@ -13,7 +13,7 @@ import pl.edu.agh.idziak.asw.visualizer.gui.root.DialogDisplay;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.io.DTOMapper;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.io.TestCaseDTO;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.model.TestCase;
-import pl.edu.agh.idziak.common.Statistics;
+import pl.edu.agh.idziak.asw.common.Statistics;
 
 import java.io.File;
 import java.io.IOException;

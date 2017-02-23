@@ -2,28 +2,29 @@
   "name" : "test1",
   "stateSpaceRows" : 10,
   "stateSpaceCols" : 10,
-  "entities" : [ {
-    "id" : 1,
-    "row" : 2,
-    "col" : 1,
-    "targetRow" : 3,
-    "targetCol" : 5
-  }, {
-    "id" : 2,
-    "row" : 4,
-    "col" : 4,
-    "targetRow" : 4,
-    "targetCol" : 5
-  } ]
-}, {
-  "name" : "test2",
-  "stateSpaceRows" : 20,
-  "stateSpaceCols" : 20,
-  "entities" : [ {
-    "id" : 1,
-    "row" : 2,
-    "col" : 1,
-    "targetRow" : 3,
-    "targetCol" : 5
-  } ]
-} ]
+  "entities" : [
+    { "id" : 1, "row" : 2, "col" : 1, "targetRow" : 3, "targetCol" : 5 },
+    { "id" : 2, "row" : 4, "col" : 4, "targetRow" : 4, "targetCol" : 5 }
+  ]
+},
+  {
+    "name" : "art1 reduced",
+    "stateSpaceRows" : 7,
+    "stateSpaceCols" : 7,
+    "entities" : [
+      { "id" : 1, "row" : 0, "col" : 0, "targetRow" : 6, "targetCol" : 6 },
+      { "id" : 2, "row" : 6, "col" : 6, "targetRow" : 0, "targetCol" : 0 }
+    ]
+  },
+  {
+    "name" : "art1",
+    "stateSpaceRows" : 7,
+    "stateSpaceCols" : 7,
+    "entities" : [
+      { "id" : 1, "row" : 0, "col" : 0, "targetRow" : 6, "targetCol" : 6 },
+      { "id" : 2, "row" : 6, "col" : 6, "targetRow" : 0, "targetCol" : 0 },
+      { "id" : 3, "row" : 0, "col" : 6, "targetRow" : 6, "targetCol" : 0 },
+      { "id" : 4, "row" : 6, "col" : 0, "targetRow" : 0, "targetCol" : 6 }
+    ]
+  }
+]

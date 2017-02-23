@@ -3,13 +3,10 @@ package pl.edu.agh.idziak.asw.visualizer.testing;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.concurrent.Task;
-import pl.edu.agh.idziak.asw.OutputPlan;
-import pl.edu.agh.idziak.asw.grid2d.G2DCollectiveState;
-import pl.edu.agh.idziak.asw.grid2d.G2DEntityState;
-import pl.edu.agh.idziak.asw.grid2d.G2DPlanner;
-import pl.edu.agh.idziak.asw.grid2d.G2DStateSpace;
+import pl.edu.agh.idziak.asw.common.Statistics;
+import pl.edu.agh.idziak.asw.impl.grid2d.*;
+import pl.edu.agh.idziak.asw.model.ASWOutputPlan;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.model.TestCase;
-import pl.edu.agh.idziak.common.Statistics;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -45,7 +42,7 @@ public class TestExecutor {
 
     private class TestExecutionTask extends Task<Void> {
         private final TestCase testCase;
-        private OutputPlan<G2DStateSpace, G2DCollectiveState, G2DEntityState, Integer, Double> outputPlan;
+        private ASWOutputPlan<G2DStateSpace, G2DCollectiveState> outputPlan;
 
         private TestExecutionTask(TestCase testCase) {
             this.testCase = testCase;
@@ -58,7 +55,6 @@ public class TestExecutor {
 
         @Override protected void succeeded() {
             testCase.outputPlanProperty().set(outputPlan);
-            statistics.set(g2DPlanner.getStatistics());
             executionObserver.executionSucceeded(testCase);
         }
 

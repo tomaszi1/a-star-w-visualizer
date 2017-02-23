@@ -1,9 +1,9 @@
 package pl.edu.agh.idziak.asw.visualizer.testing.grid2d.io;
 
-import pl.edu.agh.idziak.asw.grid2d.G2DCollectiveState;
-import pl.edu.agh.idziak.asw.grid2d.G2DEntityState;
-import pl.edu.agh.idziak.asw.grid2d.G2DInputPlan;
-import pl.edu.agh.idziak.asw.grid2d.G2DStateSpace;
+import pl.edu.agh.idziak.asw.impl.grid2d.G2DCollectiveState;
+import pl.edu.agh.idziak.asw.impl.grid2d.G2DEntityState;
+import pl.edu.agh.idziak.asw.impl.grid2d.G2DInputPlan;
+import pl.edu.agh.idziak.asw.impl.grid2d.G2DStateSpace;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.IncorrectInputException;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.model.Entity;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.model.TestCase;
@@ -29,8 +29,8 @@ public class DTOMapper {
         }
         validate(targetStates);
 
-        G2DCollectiveState initialState = G2DCollectiveState.fromEntityStates(initialStates);
-        G2DCollectiveState targetState = G2DCollectiveState.fromEntityStates(targetStates);
+        G2DCollectiveState initialState = G2DCollectiveState.from(initialStates);
+        G2DCollectiveState targetState = G2DCollectiveState.from(targetStates);
 
         G2DInputPlan g2DInputPlan = new G2DInputPlan(entities, stateSpace, initialState, targetState);
 
@@ -67,8 +67,8 @@ public class DTOMapper {
         TestCaseDTO.Builder builder = TestCaseDTO.newBuilder().name(testCase.getName());
         G2DStateSpace stateSpace = testCase.getInputPlan().getStateSpace();
         if (testCase.isLightDefinition()) {
-            builder.stateSpaceCols(stateSpace.getCols());
-            builder.stateSpaceRows(stateSpace.getRows());
+            builder.stateSpaceCols(stateSpace.countCols());
+            builder.stateSpaceRows(stateSpace.countRows());
         } else {
             builder.stateSpace(stateSpace.getData());
         }
