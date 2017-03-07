@@ -1,5 +1,6 @@
 package pl.edu.agh.idziak.asw.visualizer;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -11,5 +12,14 @@ public class Utils {
             if (object == null)
                 throw supplier.get();
         }
+    }
+
+    public static boolean allEqual(Object firstObject, Object... otherObjects) {
+        for (Object otherObject : otherObjects) {
+            if (!Objects.equals(firstObject, otherObject)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

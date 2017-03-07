@@ -5,14 +5,17 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.edu.agh.idziak.asw.visualizer.gui.editpanel.EditPanelController;
+import pl.edu.agh.idziak.asw.impl.AlgorithmType;
 import pl.edu.agh.idziak.asw.visualizer.testing.TestController;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.model.TestCase;
 
@@ -25,6 +28,7 @@ import java.util.ResourceBundle;
  * Created by Tomasz on 27.08.2016.
  */
 public class RootPresenter implements Initializable {
+
     private static final Logger LOG = LoggerFactory.getLogger(RootPresenter.class);
     private static final String ENV_VAR_PRELOAD_TEST = "preload.test";
 
@@ -33,12 +37,14 @@ public class RootPresenter implements Initializable {
     @FXML private Canvas canvas;
     @FXML private Button buttonReloadTests;
     @FXML private Button buttonOpenTests;
-    @FXML private Button buttonExecuteTests;
+    @FXML private Button buttonExecuteTestASW;
+    @FXML private Button buttonExecuteTestAStar;
+    @FXML private Button buttonExecuteTestWavefront;
     @FXML private Button buttonScaleUp;
     @FXML private Button buttonScaleDown;
+    @FXML private Button buttonQuickSaveCanvas;
     @FXML private ListView<TestCase> testCaseListView;
     @FXML private Window window;
-    @FXML private EditPanelController editPanelController;
 
     @Inject
     private TestController testController;
@@ -46,6 +52,9 @@ public class RootPresenter implements Initializable {
     private TestCaseListController testCaseListController;
 
     private GridCanvasController gridCanvasController;
+
+    @Inject
+    private ImageWriter imageWriter;
 
 
     @Override
@@ -68,16 +77,16 @@ public class RootPresenter implements Initializable {
 
     private void initializeButtons() {
         buttonOpenTests.setOnAction(event -> buttonOpenTestsClicked());
-        buttonExecuteTests.setOnAction(event -> testController.executeActiveTest());
+        buttonExecuteTestASW.setOnAction(event -> testController.executeActiveTest(AlgorithmType.ASW));
+        buttonExecuteTestAStar.setOnAction(event -> testController.executeActiveTest(AlgorithmType.ASTAR_ONLY));
+        buttonExecuteTestWavefront.setOnAction(event -> testController.executeActiveTest(AlgorithmType.WAVEFRONT));
         buttonReloadTests.setOnAction(event -> testController.reloadTests());
         buttonScaleDown.setOnAction(event -> gridCanvasController.scaleDown());
         buttonScaleUp.setOnAction(event -> gridCanvasController.scaleUp());
-    }
-
-    private void buttonSaveTestsAsClicked() {
-        File file = chooseFile();
-        if (file == null) return;
-        testController.saveTestsAs(file);
+        buttonQuickSaveCanvas.setOnAction(event -> {
+            WritableImage writableImage = gridCanvasController.snapshotCanvas();
+            imageWriter.writeImageToDefaultLocation(writableImage);
+        });
     }
 
     private void buttonOpenTestsClicked() {

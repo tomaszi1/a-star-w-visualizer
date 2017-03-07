@@ -2,23 +2,21 @@ package pl.edu.agh.idziak.asw.visualizer.gui.root;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableObjectValue;
-import javafx.geometry.VPos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.TextAlignment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.edu.agh.idziak.asw.common.UntypedTwoMapsIterator;
-import pl.edu.agh.idziak.asw.common.WalkingPairIterator;
+import pl.edu.agh.idziak.asw.impl.ExtendedOutputPlan;
 import pl.edu.agh.idziak.asw.impl.grid2d.G2DCollectiveState;
 import pl.edu.agh.idziak.asw.impl.grid2d.G2DEntityState;
 import pl.edu.agh.idziak.asw.impl.grid2d.G2DStateSpace;
-import pl.edu.agh.idziak.asw.model.ASWOutputPlan;
+import pl.edu.agh.idziak.asw.visualizer.gui.drawing.GridParams;
 import pl.edu.agh.idziak.asw.visualizer.gui.drawing.devzone.DevZoneCellDrawingDelegate;
-import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.model.Entity;
+import pl.edu.agh.idziak.asw.visualizer.gui.drawing.entity.EntityDrawingDelegate;
+import pl.edu.agh.idziak.asw.visualizer.gui.drawing.entity.PathDrawingDelegate;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.model.TestCase;
 
 import java.util.List;
@@ -27,23 +25,29 @@ import java.util.List;
  * Created by Tomasz on 28.08.2016.
  */
 public class GridCanvasController {
+
     private static final Logger LOG = LoggerFactory.getLogger(GridCanvasController.class);
-    private static final int NORMAL_CELL_WIDTH = 40;
-    private double scaleFactor = 1;
-    private int entityWidth = getCellWidth() * 2 / 3;
-    private int entityTargetWidth = getCellWidth() * 3 / 4;
+
     private Canvas canvas;
     private CanvasMouseEventsDispatcher canvasMouseEventsDispatcher;
     private TestCase currentTestCase;
-    private final ChangeListener<ASWOutputPlan<G2DStateSpace, G2DCollectiveState>> outputPlanChangeListener
+
+    private GridParams gridParams = new GridParams();
+
+    private final ChangeListener<ExtendedOutputPlan<G2DStateSpace, G2DCollectiveState>> outputPlanChangeListener
             = (obs, oldVal, newVal) -> repaint();
+
+    private PathDrawingDelegate pathDrawingDelegate;
+    private EntityDrawingDelegate entityDrawingDelegate;
     private DevZoneCellDrawingDelegate devZoneCellDrawingDelegate;
 
     public GridCanvasController(Canvas canvas, ObservableObjectValue<TestCase>
             testCaseObjectProperty, CanvasMouseEventsDispatcher canvasMouseEventsDispatcher) {
         this.canvas = canvas;
         this.canvasMouseEventsDispatcher = canvasMouseEventsDispatcher;
-        devZoneCellDrawingDelegate = new DevZoneCellDrawingDelegate();
+        this.devZoneCellDrawingDelegate = new DevZoneCellDrawingDelegate();
+        this.entityDrawingDelegate = new EntityDrawingDelegate(gridParams);
+        this.pathDrawingDelegate = new PathDrawingDelegate(gridParams);
 
         testCaseObjectProperty.addListener((observable, oldValue, newTestCase) -> {
             if (currentTestCase != null) {
@@ -53,6 +57,7 @@ public class GridCanvasController {
             currentTestCase.outputPlanProperty().addListener(outputPlanChangeListener);
         });
 
+
         canvas.setOnMouseClicked(this::handleCanvasClicked);
     }
 
@@ -60,10 +65,6 @@ public class GridCanvasController {
         int colIndex = getIndexForPosition((int) event.getX());
         int rowIndex = getIndexForPosition((int) event.getY());
         canvasMouseEventsDispatcher.cellClicked(rowIndex, colIndex);
-    }
-
-    private int getIndexForPosition(int pos) {
-        return pos / getCellWidth();
     }
 
     private void repaint() {
@@ -79,15 +80,13 @@ public class GridCanvasController {
             return;
         }
 
-        G2DStateSpace stateSpace = testCase.getInputPlan().getStateSpace();
-
-        drawStateSpace(gc, stateSpace);
+        drawStateSpace(gc, testCase.getInputPlan().getStateSpace());
+        drawDeviationZones(gc, testCase);
 
         if (currentTestCase.outputPlanProperty().isNotNull().get()) {
             drawOutputPlan(gc);
         }
-        drawEntities(gc, testCase);
-        drawDeviationZones(gc, testCase);
+        entityDrawingDelegate.drawEntities(gc, testCase);
     }
 
     private void drawDeviationZones(GraphicsContext gc, TestCase testCase) {
@@ -99,6 +98,7 @@ public class GridCanvasController {
 
         testCase.outputPlanProperty()
                 .get()
+                .getOutputPlan()
                 .getSubspacePlans()
                 .forEach(devZonePlan -> {
                     devZonePlan.getSubspace()
@@ -132,10 +132,6 @@ public class GridCanvasController {
         gc.clip();
     }
 
-    private int getTopPosForIndex(int index) {
-        return index * getCellWidth();
-    }
-
     private void drawStateSpace(GraphicsContext gc, G2DStateSpace stateSpace) {
         int rows = stateSpace.countRows();
         int cols = stateSpace.countCols();
@@ -144,6 +140,13 @@ public class GridCanvasController {
         canvas.setHeight(getCellWidth() * rows);
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
+        drawGrid(gc, rows, cols);
+
+        drawObstacles(gc, stateSpace);
+    }
+
+    private void drawGrid(GraphicsContext gc, int rows, int cols) {
+        gc.save();
         gc.setStroke(Color.BLACK);
         gc.setLineWidth(1);
 
@@ -156,123 +159,70 @@ public class GridCanvasController {
             int xPos = curCol * getCellWidth();
             gc.strokeLine(xPos, 0, xPos, rows * getCellWidth());
         }
+        gc.restore();
+    }
+
+    private void drawObstacles(GraphicsContext gc, G2DStateSpace stateSpace) {
+        gc.save();
+        gc.setFill(Color.DARKRED);
+
+        int[][] gridArray = stateSpace.getGridArray();
+
+        int obstacleWidth = getObstacleWidth();
+        int offset = (getCellWidth() - obstacleWidth) / 2;
+
+        for (int i = 0; i < gridArray.length; i++) {
+            for (int j = 0; j < gridArray[i].length; j++) {
+                if (gridArray[i][j] > 0) {
+                    int yPos = getTopPosForIndex(i) + offset;
+                    int xPos = getTopPosForIndex(j) + offset;
+                    gc.fillRect(xPos, yPos, obstacleWidth, obstacleWidth);
+                }
+            }
+        }
+        gc.restore();
     }
 
     private void drawOutputPlan(GraphicsContext gc) {
-        List<G2DCollectiveState> collectivePath = currentTestCase.outputPlanProperty().get().getCollectivePath().get();
+        List<G2DCollectiveState> collectivePath = currentTestCase.outputPlanProperty()
+                                                                 .get()
+                                                                 .getOutputPlan()
+                                                                 .getCollectivePath()
+                                                                 .get();
 
-        WalkingPairIterator<G2DCollectiveState> it = new WalkingPairIterator<>(collectivePath);
-        while (it.hasNext()) {
-            it.next();
-            drawPathFragments(it.getFirst(), it.getSecond(), gc);
-        }
+        pathDrawingDelegate.drawPaths(collectivePath, gc);
+
+
     }
 
-    private void drawPathFragments(G2DCollectiveState first, G2DCollectiveState second, GraphicsContext gc) {
-        UntypedTwoMapsIterator<G2DEntityState> it =
-                new UntypedTwoMapsIterator<>(first.getEntityStates(), second.getEntityStates());
-
-        while (it.hasNext()) {
-            it.next();
-            drawPathFragment(it.getFirstValue(), it.getSecondValue(), gc);
-        }
-    }
-
-    private void drawPathFragment(G2DEntityState first, G2DEntityState second, GraphicsContext gc) {
-        gc.save();
-        gc.setStroke(Color.BLACK);
-        gc.setLineWidth(1);
-        gc.strokeLine(getCenterPosForIndex(first.getCol()),
-                getCenterPosForIndex(first.getRow()),
-                getCenterPosForIndex(second.getCol()),
-                getCenterPosForIndex(second.getRow()));
-        gc.restore();
-    }
-
-    private int getCenterPosForIndex(int pos) {
-        return getTopPosForIndex(pos) + getCellWidth() / 2;
-    }
-
-    private void drawEntities(GraphicsContext gc, TestCase testCase) {
-        testCase.getInputPlan()
-                .getInitialCollectiveState()
-                .getEntityStates()
-                .entrySet()
-                .forEach(entry -> drawInitialEntityState(entry.getKey(), entry.getValue(), gc));
-        testCase.getInputPlan()
-                .getTargetCollectiveState()
-                .getEntityStates()
-                .entrySet()
-                .forEach(entry -> drawTargetEntityState(entry.getKey(), entry.getValue(), gc));
-    }
-
-    private void drawTargetEntityState(Object entity, G2DEntityState state, GraphicsContext gc) {
-        gc.save();
-        int leftX = getTopPosForIndex(state.getCol());
-        int topY = getTopPosForIndex(state.getRow());
-
-        // gc.setFill(Color.LIGHTBLUE);
-        gc.setStroke(Color.LIGHTBLUE);
-        gc.setLineWidth(3.0);
-
-        int entityRectOffset = (getCellWidth() - entityTargetWidth) / 2;
-        gc.strokeRect(leftX + entityRectOffset, topY + entityRectOffset, entityTargetWidth, entityTargetWidth);
-
-        // gc.setTextAlign(TextAlignment.CENTER);
-        // gc.setTextBaseline(VPos.CENTER);
-
-        // if (entity instanceof Entity) {
-        //     gc.setFill(Color.BLACK);
-        //     gc.setFont(Font.font(20));
-        //     gc.fillText(
-        //             ((Entity) entity).getId().toString(),
-        //             leftX + getCellWidth() / 2,
-        //             topY + getCellWidth() / 2
-        //     );
-        // }
-
-        gc.restore();
-    }
-
-    private void drawInitialEntityState(Object entity, G2DEntityState state, GraphicsContext gc) {
-        gc.save();
-        int leftX = getCellWidth() * state.getCol();
-        int topY = getCellWidth() * state.getRow();
-
-        gc.setFill(Color.ORANGE);
-        int entityRectOffset = (getCellWidth() - entityWidth) / 2;
-        gc.fillRect(leftX + entityRectOffset, topY + entityRectOffset, entityWidth, entityWidth);
-
-        gc.setTextAlign(TextAlignment.CENTER);
-        gc.setTextBaseline(VPos.CENTER);
-
-        if (entity instanceof Entity) {
-            gc.setFill(Color.BLACK);
-            gc.setFont(Font.font(20));
-            gc.fillText(
-                    ((Entity) entity).getId().toString(),
-                    leftX + getCellWidth() / 2,
-                    topY + getCellWidth() / 2
-            );
-        }
-
-        gc.restore();
-    }
-
-    void scaleUp() {
-        scaleFactor = scaleFactor * 5 / 4;
-        repaint();
-    }
-
-    void scaleDown() {
-        if (getCellWidth() < 10) {
-            return;
-        }
-        scaleFactor = scaleFactor * 4 / 5;
-        repaint();
+    private int getTopPosForIndex(int index) {
+        return gridParams.getTopPosForIndex(index);
     }
 
     private int getCellWidth() {
-        return (int) (NORMAL_CELL_WIDTH * scaleFactor);
+        return gridParams.getCellWidth();
+    }
+
+    private int getObstacleWidth() {
+        return gridParams.getObstacleWidth();
+    }
+
+    private int getIndexForPosition(int pos) {
+        return pos / gridParams.getCellWidth();
+    }
+
+    public void scaleDown() {
+        gridParams.scaleDown();
+        repaint();
+    }
+
+    public void scaleUp() {
+        gridParams.scaleUp();
+        repaint();
+    }
+
+    public WritableImage snapshotCanvas() {
+        WritableImage writableImage = new WritableImage((int) canvas.getWidth(), (int) canvas.getHeight());
+        return canvas.snapshot(null, writableImage);
     }
 }

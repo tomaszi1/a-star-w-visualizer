@@ -7,7 +7,7 @@
             xmlns="http://javafx.com/javafx/8.0.91" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="pl.edu.agh.idziak.asw.visualizer.gui.root.RootPresenter">
     <center>
-        <SplitPane dividerPositions="0.1,0.9">
+        <SplitPane dividerPositions="0.1,0.8">
             <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                 <top>
                     <Label fx:id="testFileLabel" text="Test file:" BorderPane.alignment="CENTER"/>
@@ -26,12 +26,15 @@
         </SplitPane>
     </center>
     <bottom>
-        <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+        <ToolBar prefHeight="40.0" prefWidth="300.0" BorderPane.alignment="CENTER">
             <Button fx:id="buttonOpenTests" text="Open tests"/>
             <Button fx:id="buttonReloadTests" text="Reload tests"/>
-            <Button fx:id="buttonExecuteTests" text="Execute test"/>
+            <Button fx:id="buttonExecuteTestASW" text="Execute ASW"/>
+            <Button fx:id="buttonExecuteTestAStar" text="Execute A* only"/>
+            <Button fx:id="buttonExecuteTestWavefront" text="Execute wavefront only"/>
             <Button fx:id="buttonScaleUp" text="Scale up"/>
             <Button fx:id="buttonScaleDown" text="Scale down"/>
+            <Button fx:id="buttonQuickSaveCanvas" text="Quick-save canvas"/>
         </ToolBar>
     </bottom>
 </BorderPane>

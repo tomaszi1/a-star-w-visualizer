@@ -9,6 +9,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.edu.agh.idziak.asw.impl.AlgorithmType;
 import pl.edu.agh.idziak.asw.visualizer.gui.root.DialogDisplay;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.io.DTOMapper;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.io.TestCaseDTO;
@@ -25,6 +26,7 @@ import static java.util.stream.Collectors.toList;
  * Created by Tomasz on 27.08.2016.
  */
 public class TestController {
+
     private static final Logger LOG = LoggerFactory.getLogger(TestController.class);
     private static final String LOG_MESSAGE_TEST_FAILED = "Test failed with an error";
     private TestLoader testLoader;
@@ -46,9 +48,9 @@ public class TestController {
         testExecutor = new TestExecutor(activeTestCaseProperty(), executionObserver);
     }
 
-    public void executeActiveTest() {
+    public void executeActiveTest(AlgorithmType algorithmType) {
         try {
-            testExecutor.executeTest();
+            testExecutor.invokeTestInNewThread(algorithmType);
         } catch (RuntimeException e) {
             dialogDisplay.displayException(LOG_MESSAGE_TEST_FAILED, e);
             LOG.error(LOG_MESSAGE_TEST_FAILED, e);
@@ -115,13 +117,14 @@ public class TestController {
         loadTests(currentTestsFile);
     }
 
-    public ObservableObjectValue<Statistics> statisticsProperty(){
+    public ObservableObjectValue<Statistics> statisticsProperty() {
         return testExecutor.statisticsProperty();
     }
 
     private final ExecutionObserver executionObserver = new ExecutionObserver() {
         @Override public void executionFailed(Throwable e) {
             dialogDisplay.displayException("Test execution failed", e);
+            LOG.error("Test exec failed", e);
         }
 
         @Override public void executionSucceeded(TestCase testCase) {
