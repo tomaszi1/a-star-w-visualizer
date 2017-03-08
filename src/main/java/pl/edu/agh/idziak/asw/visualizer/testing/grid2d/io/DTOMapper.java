@@ -92,14 +92,14 @@ public class DTOMapper {
     private static G2DStateSpace mapStateSpace(TestCaseDTO testCaseDTO) {
         G2DStateSpace stateSpace;
         if (testCaseDTO.getStateSpace() != null) {
-            stateSpace = new G2DStateSpace(testCaseDTO.getStateSpace());
+            stateSpace = new G2DStateSpace(testCaseDTO.getStateSpace(), testCaseDTO.getEntities().size());
         } else {
             if (!isLightlyDefined(testCaseDTO)) {
                 throw new RuntimeException("Missing state space definition in " + testCaseDTO);
             }
             Integer rows = testCaseDTO.getStateSpaceRows();
             Integer cols = testCaseDTO.getStateSpaceCols();
-            stateSpace = new G2DStateSpace(new int[rows][cols]);
+            stateSpace = new G2DStateSpace(new int[rows][cols], testCaseDTO.getEntities().size());
         }
         return stateSpace;
     }
