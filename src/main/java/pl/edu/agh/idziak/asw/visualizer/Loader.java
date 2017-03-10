@@ -2,7 +2,6 @@ package pl.edu.agh.idziak.asw.visualizer;
 
 import com.airhacks.afterburner.injection.Injector;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
@@ -11,12 +10,12 @@ import pl.edu.agh.idziak.asw.visualizer.gui.root.RootPresenter;
 import pl.edu.agh.idziak.asw.visualizer.gui.root.RootView;
 
 public class Loader extends Application {
+
     private static final Logger LOG = LoggerFactory.getLogger(Loader.class);
     private static final String ENV_VAR_MAXIMIZE = "maximize";
 
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("A*W Visualizer 0.1");
-
         RootView rootView = new RootView();
 
         Scene scene = new Scene(rootView.getView(), 800, 600);
@@ -27,7 +26,6 @@ public class Loader extends Application {
         primaryStage.setScene(scene);
         optionallyMaximizeWindow(primaryStage);
         primaryStage.show();
-        primaryStage.setOnCloseRequest(event -> Platform.exit());
     }
 
     private static void optionallyMaximizeWindow(Stage primaryStage) {

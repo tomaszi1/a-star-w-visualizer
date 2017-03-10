@@ -1,5 +1,6 @@
 package pl.edu.agh.idziak.asw.visualizer.testing;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.concurrent.Task;
@@ -24,7 +25,8 @@ public class TestExecutor {
     private static final Logger LOG = LoggerFactory.getLogger(TestExecutor.class);
 
     private final ObservableObjectValue<TestCase> activeTestCase;
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private final ExecutorService executorService =
+            Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().setDaemon(true).build());
     private final SimpleObjectProperty<Statistics> statistics;
     private ExecutionObserver executionObserver;
 
@@ -78,7 +80,7 @@ public class TestExecutor {
         if (outputPlan.getCollectivePath().get() != null)
             statistics.putStat("path length", outputPlan.getCollectivePath().get().size());
         if (!outputPlan.getSubspacePlans().isEmpty())
-            statistics.putStat("deviation zones count",outputPlan.getSubspacePlans().size());
+            statistics.putStat("deviation zones count", outputPlan.getSubspacePlans().size());
         return statistics;
     }
 
