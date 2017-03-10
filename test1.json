@@ -1,6 +1,6 @@
 [
   {
-    "name": "art1 - 1 entity",
+    "name": "7x7 - 1 entity",
     "stateSpaceRows": 7,
     "stateSpaceCols": 7,
     "entities": [
@@ -8,7 +8,7 @@
     ]
   },
   {
-    "name": "art1 - 2 entities",
+    "name": "7x7 - 2 entities",
     "stateSpaceRows": 7,
     "stateSpaceCols": 7,
     "entities": [
@@ -17,7 +17,7 @@
     ]
   },
   {
-    "name": "art1 - 3 entities",
+    "name": "7x7 - 3 entities",
     "stateSpaceRows": 7,
     "stateSpaceCols": 7,
     "entities": [
@@ -27,7 +27,7 @@
     ]
   },
   {
-    "name": "art1 - 4 entities",
+    "name": "7x7 - 4 entities",
     "stateSpaceRows": 7,
     "stateSpaceCols": 7,
     "entities": [
@@ -38,7 +38,7 @@
     ]
   },
   {
-    "name": "art1 - 4 entities",
+    "name": "7x7 - 5 entities",
     "stateSpaceRows": 7,
     "stateSpaceCols": 7,
     "entities": [
@@ -47,6 +47,46 @@
       { "id": 3, "row": 0, "col": 6, "targetRow": 6, "targetCol": 0 },
       { "id": 4, "row": 6, "col": 0, "targetRow": 0, "targetCol": 6 },
       { "id": 5, "row": 3, "col": 0, "targetRow": 3, "targetCol": 6 }
+    ]
+  },
+  {
+    "name": "7x7 - 6 entities",
+    "stateSpaceRows": 7,
+    "stateSpaceCols": 7,
+    "entities": [
+      { "id": 1, "row": 0, "col": 0, "targetRow": 6, "targetCol": 6 },
+      { "id": 2, "row": 6, "col": 6, "targetRow": 0, "targetCol": 0 },
+      { "id": 3, "row": 0, "col": 6, "targetRow": 6, "targetCol": 0 },
+      { "id": 4, "row": 6, "col": 0, "targetRow": 0, "targetCol": 6 },
+      { "id": 5, "row": 3, "col": 0, "targetRow": 3, "targetCol": 6 },
+      { "id": 6, "row": 0, "col": 3, "targetRow": 6, "targetCol": 3 }
+    ]
+  },
+  {
+    "name": "7x7 - 7 entities",
+    "stateSpaceRows": 7,
+    "stateSpaceCols": 7,
+    "entities": [
+      { "id": 1, "row": 0, "col": 0, "targetRow": 6, "targetCol": 6 },
+      { "id": 2, "row": 6, "col": 6, "targetRow": 0, "targetCol": 0 },
+      { "id": 3, "row": 0, "col": 6, "targetRow": 6, "targetCol": 0 },
+      { "id": 4, "row": 6, "col": 0, "targetRow": 0, "targetCol": 6 },
+      { "id": 5, "row": 3, "col": 0, "targetRow": 3, "targetCol": 6 },
+      { "id": 6, "row": 0, "col": 3, "targetRow": 6, "targetCol": 3 },
+      { "id": 7, "row": 3, "col": 6, "targetRow": 3, "targetCol": 0 }
+    ]
+  },
+  {
+    "name": "5x5 - 6 entities",
+    "stateSpaceRows": 5,
+    "stateSpaceCols": 5,
+    "entities": [
+      { "id": 1, "row": 0, "col": 0, "targetRow": 4, "targetCol": 4 },
+      { "id": 2, "row": 4, "col": 4, "targetRow": 0, "targetCol": 0 },
+      { "id": 3, "row": 0, "col": 4, "targetRow": 4, "targetCol": 0 },
+      { "id": 4, "row": 4, "col": 0, "targetRow": 0, "targetCol": 4 },
+      { "id": 5, "row": 2, "col": 0, "targetRow": 2, "targetCol": 4 },
+      { "id": 6, "row": 0, "col": 2, "targetRow": 4, "targetCol": 2 }
     ]
   },
   {
@@ -85,16 +125,6 @@
     "entities": [
       { "id": 1, "row": 0, "col": 0, "targetRow": 0, "targetCol": 6 },
       { "id": 2, "row": 0, "col": 6, "targetRow": 0, "targetCol": 0 }
-    ]
-  },
-  {
-    "name": "3 entities - 5x5",
-    "stateSpaceRows": 5,
-    "stateSpaceCols": 5,
-    "entities": [
-      { "id": 1, "row": 0, "col": 0, "targetRow": 4, "targetCol": 4 },
-      { "id": 1, "row": 4, "col": 4, "targetRow": 0, "targetCol": 0 },
-      { "id": 1, "row": 0, "col": 4, "targetRow": 4, "targetCol": 0 }
     ]
   }
 ]
