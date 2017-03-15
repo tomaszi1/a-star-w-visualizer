@@ -213,7 +213,25 @@
     "entities": [
       { "id": 1, "row": 0, "col": 0, "targetRow": 6, "targetCol": 2 },
       { "id": 2, "row": 6, "col": 2, "targetRow": 0, "targetCol": 0 },
-      { "id": 1, "row": 0, "col": 2, "targetRow": 6, "targetCol": 0 }
+      { "id": 3, "row": 0, "col": 2, "targetRow": 6, "targetCol": 0 }
+    ]
+  },
+  {
+    "name": "swap (with overstepping) - 3 entities - 7x3",
+    "stateSpace": [
+      [0, 1, 0],
+      [0, 1, 0],
+      [0, 1, 0],
+      [0, 0, 0],
+      [0, 1, 0],
+      [0, 1, 0],
+      [0, 1, 0]
+    ],
+    "entities": [
+      { "id": 1, "row": 0, "col": 0, "targetRow": 6, "targetCol": 2 },
+      { "id": 2, "row": 6, "col": 2, "targetRow": 0, "targetCol": 0 },
+      { "id": 3, "row": 0, "col": 2, "targetRow": 6, "targetCol": 0 },
+      { "id": 4, "row": 6, "col": 0, "targetRow": 0, "targetCol": 2 }
     ]
   }
 ]
