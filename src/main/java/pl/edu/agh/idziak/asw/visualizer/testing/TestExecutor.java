@@ -102,7 +102,7 @@ public class TestExecutor {
 
         @Override protected void succeeded() {
             LOG.info("Test executed, path: {}", outputPlan.getOutputPlan());
-            testCase.outputPlanProperty().set(outputPlan);
+            testCase.setOutputPlan(outputPlan);
             statistics.set(buildStats(outputPlan.getBenchmark(), outputPlan.getOutputPlan()));
             executionObserver.executionSucceeded(testCase);
         }

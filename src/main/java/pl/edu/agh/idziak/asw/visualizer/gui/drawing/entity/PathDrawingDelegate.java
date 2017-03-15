@@ -44,7 +44,7 @@ public class PathDrawingDelegate {
     public void drawPaths(List<G2DCollectiveState> collectivePath, GraphicsContext gc) {
 
         gc.save();
-        gc.setLineWidth(1);
+        gc.setLineWidth(2);
         newColorIterator();
 
         countOverlappingLines(collectivePath);

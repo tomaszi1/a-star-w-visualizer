@@ -22,8 +22,20 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>19.0</version>
+            <version>21.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava-testlib</artifactId>
+            <version>21.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-generator-annprocess</artifactId>
+            <version>1.9</version>
+        </dependency>
+
 
         <!-- logging -->
         <dependency>
@@ -71,6 +83,8 @@
             <scope>compile</scope>
         </dependency>
     </dependencies>
+
+
     <build>
         <defaultGoal>clean package</defaultGoal>
         <plugins>

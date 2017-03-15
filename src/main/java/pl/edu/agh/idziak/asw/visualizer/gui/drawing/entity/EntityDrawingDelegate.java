@@ -19,6 +19,7 @@ import java.util.Map;
  * Created by Tomasz on 23.02.2017.
  */
 public class EntityDrawingDelegate {
+
     private Iterator<Color> colorIterator;
 
     private void newColorIterator() {
@@ -36,10 +37,15 @@ public class EntityDrawingDelegate {
         gc.save();
         newColorIterator();
 
-        Map<?, G2DEntityState> initialStates = testCase.getInputPlan().getInitialCollectiveState().getEntityStates();
+        Map<?, G2DEntityState> currentStates;
+        if (testCase.getActiveSimulation() == null) {
+            currentStates = testCase.getInputPlan().getInitialCollectiveState().getEntityStates();
+        } else {
+            currentStates = testCase.getActiveSimulation().getCurrentState().getEntityStates();
+        }
         Map<?, G2DEntityState> targetStates = testCase.getInputPlan().getTargetCollectiveState().getEntityStates();
 
-        for (Map.Entry<?, G2DEntityState> entry : initialStates.entrySet()) {
+        for (Map.Entry<?, G2DEntityState> entry : currentStates.entrySet()) {
             Object entity = entry.getKey();
 
             Color color = colorIterator.next();

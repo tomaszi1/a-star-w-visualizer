@@ -9,12 +9,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.edu.agh.idziak.asw.common.Statistics;
 import pl.edu.agh.idziak.asw.impl.AlgorithmType;
+import pl.edu.agh.idziak.asw.visualizer.GlobalEventBus;
 import pl.edu.agh.idziak.asw.visualizer.gui.root.DialogDisplay;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.io.DTOMapper;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.io.TestCaseDTO;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.model.TestCase;
-import pl.edu.agh.idziak.asw.common.Statistics;
 
 import java.io.File;
 import java.io.IOException;
@@ -79,27 +80,6 @@ public class TestController {
     }
 
 
-    public void saveTestsAs(File file) {
-        try {
-            unsafeSaveTests(file);
-        } catch (IOException e) {
-            dialogDisplay.displayError("Could not load test cases: " + e.getMessage());
-            LOG.info("Error while loading file", e);
-        }
-    }
-
-    public void saveTests() {
-        if (currentTestsFile == null) {
-            return;
-        }
-        saveTestsAs(currentTestsFile);
-    }
-
-    private void unsafeSaveTests(File file) throws IOException {
-        List<TestCaseDTO> testCaseDTOs = testCases.stream().map(DTOMapper::internalToDto).collect(toList());
-        testLoader.writeTestsFile(file, testCaseDTOs);
-    }
-
     public ObservableStringValue getActiveTestFileNameProperty() {
         return activeTestFileNameProperty;
     }
@@ -111,6 +91,7 @@ public class TestController {
     public void setActiveTestCase(TestCase testCase) {
         Preconditions.checkArgument(testCases.contains(testCase), "Given test case is not in current test set");
         activeTestCase.set(testCase);
+        GlobalEventBus.INSTANCE.get().post(new ActiveTestCaseChangeEvent(testCase));
     }
 
     public void reloadTests() {
@@ -130,4 +111,5 @@ public class TestController {
         @Override public void executionSucceeded(TestCase testCase) {
         }
     };
+
 }

@@ -1,5 +1,7 @@
 package pl.edu.agh.idziak.asw.visualizer.gui.root;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.eventbus.Subscribe;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.scene.canvas.Canvas;
@@ -13,10 +15,15 @@ import pl.edu.agh.idziak.asw.impl.ExtendedOutputPlan;
 import pl.edu.agh.idziak.asw.impl.grid2d.G2DCollectiveState;
 import pl.edu.agh.idziak.asw.impl.grid2d.G2DEntityState;
 import pl.edu.agh.idziak.asw.impl.grid2d.G2DStateSpace;
+import pl.edu.agh.idziak.asw.impl.grid2d.G2DSubspace;
+import pl.edu.agh.idziak.asw.visualizer.GlobalEventBus;
 import pl.edu.agh.idziak.asw.visualizer.gui.drawing.GridParams;
 import pl.edu.agh.idziak.asw.visualizer.gui.drawing.devzone.DevZoneCellDrawingDelegate;
 import pl.edu.agh.idziak.asw.visualizer.gui.drawing.entity.EntityDrawingDelegate;
 import pl.edu.agh.idziak.asw.visualizer.gui.drawing.entity.PathDrawingDelegate;
+import pl.edu.agh.idziak.asw.visualizer.gui.drawing.simulation.NewSimulationEvent;
+import pl.edu.agh.idziak.asw.visualizer.gui.drawing.simulation.Simulation;
+import pl.edu.agh.idziak.asw.visualizer.gui.drawing.simulation.SimulationStateChangedEvent;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.model.TestCase;
 
 import java.util.List;
@@ -50,15 +57,31 @@ public class GridCanvasController {
         this.pathDrawingDelegate = new PathDrawingDelegate(gridParams);
 
         testCaseObjectProperty.addListener((observable, oldValue, newTestCase) -> {
-            if (currentTestCase != null) {
-                currentTestCase.outputPlanProperty().removeListener(outputPlanChangeListener);
-            }
-            drawTestCase(newTestCase);
-            currentTestCase.outputPlanProperty().addListener(outputPlanChangeListener);
+            currentTestCase = newTestCase;
+            drawCurrentTestCase();
         });
-
+        GlobalEventBus.INSTANCE.get().register(new NewSimulationSubscriber());
 
         canvas.setOnMouseClicked(this::handleCanvasClicked);
+    }
+
+    public class NewSimulationSubscriber {
+
+        @Subscribe
+        public void newSimulation(NewSimulationEvent newSimulationEvent) {
+            redrawIfSimulationForCurrentTestCase(newSimulationEvent.getSimulation());
+        }
+
+        @Subscribe
+        public void simulationChanged(SimulationStateChangedEvent simulationStateChangedEvent) {
+            redrawIfSimulationForCurrentTestCase(simulationStateChangedEvent.getSimulation());
+        }
+
+        private void redrawIfSimulationForCurrentTestCase(Simulation simulation) {
+            if (currentTestCase.getActiveSimulation() == simulation) {
+                drawCurrentTestCase();
+            }
+        }
     }
 
     private void handleCanvasClicked(MouseEvent event) {
@@ -68,47 +91,40 @@ public class GridCanvasController {
     }
 
     private void repaint() {
-        drawTestCase(currentTestCase);
+        drawCurrentTestCase();
     }
 
-    private void drawTestCase(TestCase testCase) {
+    private void drawCurrentTestCase() {
         LOG.info("Redrawing test case");
-        currentTestCase = testCase;
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
-        if (testCase == null) {
+        if (currentTestCase == null) {
             return;
         }
 
-        drawStateSpace(gc, testCase.getInputPlan().getStateSpace());
-        drawDeviationZones(gc, testCase);
-
-        if (currentTestCase.outputPlanProperty().isNotNull().get()) {
-            drawOutputPlan(gc);
-        }
-        entityDrawingDelegate.drawEntities(gc, testCase);
+        drawStateSpace(gc, currentTestCase.getInputPlan().getStateSpace());
+        drawDeviationZones(gc);
+        drawPaths(gc);
+        entityDrawingDelegate.drawEntities(gc, currentTestCase);
     }
 
-    private void drawDeviationZones(GraphicsContext gc, TestCase testCase) {
-        if (testCase.outputPlanProperty().isNull().get()) {
-            return;
-        }
-
+    private void drawDeviationZones(GraphicsContext gc) {
         devZoneCellDrawingDelegate.resetState();
 
-        testCase.outputPlanProperty()
-                .get()
-                .getOutputPlan()
-                .getSubspacePlans()
-                .forEach(devZonePlan -> {
-                    devZonePlan.getSubspace()
-                               .getStates()
-                               .stream()
-                               .flatMap(collectiveState -> collectiveState.getEntityStates().values().stream())
-                               .distinct()
-                               .forEach(entityState -> drawDevZoneEntityState(gc, entityState));
-                    devZoneCellDrawingDelegate.switchPattern();
-                });
+        if (currentTestCase.getActiveSimulation() == null) {
+            return;
+        }
+        currentTestCase.getActiveSimulation()
+                       .getOutputPlan()
+                       .getSubspacePlans()
+                       .forEach(devZonePlan -> {
+                           if (devZonePlan.getSubspace() instanceof G2DSubspace) {
+                               ((G2DSubspace) devZonePlan.getSubspace())
+                                       .getContainedEntityStates()
+                                       .forEach(entityState -> drawDevZoneEntityState(gc, entityState));
+                           }
+                           devZoneCellDrawingDelegate.switchPattern();
+                       });
     }
 
     private void drawDevZoneEntityState(GraphicsContext gc, G2DEntityState state) {
@@ -183,16 +199,24 @@ public class GridCanvasController {
         gc.restore();
     }
 
-    private void drawOutputPlan(GraphicsContext gc) {
-        List<G2DCollectiveState> collectivePath = currentTestCase.outputPlanProperty()
-                                                                 .get()
-                                                                 .getOutputPlan()
-                                                                 .getCollectivePath()
-                                                                 .get();
-
-        pathDrawingDelegate.drawPaths(collectivePath, gc);
-
-
+    private void drawPaths(GraphicsContext gc) {
+        Simulation activeSimulation = currentTestCase.getActiveSimulation();
+        if (activeSimulation == null) {
+            return;
+        }
+        if (activeSimulation.isReset()) {
+            List<G2DCollectiveState> collectivePath = activeSimulation.getOutputPlan().getCollectivePath().get();
+            pathDrawingDelegate.drawPaths(collectivePath, gc);
+        } else {
+            G2DCollectiveState nextState = activeSimulation.getEffectiveNextState();
+            if (nextState != null) {
+                ImmutableList<G2DCollectiveState> nextStepPathFragment = ImmutableList.of(
+                        activeSimulation.getCurrentState(),
+                        nextState
+                );
+                pathDrawingDelegate.drawPaths(nextStepPathFragment, gc);
+            }
+        }
     }
 
     private int getTopPosForIndex(int index) {

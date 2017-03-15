@@ -90,7 +90,7 @@
     ]
   },
   {
-    "name": "confined swap - 2 entities",
+    "name": "confined swap - 2 entities - 7x2",
     "stateSpace": [
       [0, 1],
       [0, 1],
@@ -106,7 +106,7 @@
     ]
   },
   {
-    "name": "confined swap - 2 entities - horizontal",
+    "name": "confined swap - 2 entities - 2x7",
     "stateSpace": [
       [0, 0, 0, 0, 0, 0, 0],
       [1, 1, 1, 0, 1, 1, 1]
@@ -117,7 +117,7 @@
     ]
   },
   {
-    "name": "close swap - 2 entities",
+    "name": "close swap - 2 entities - 2x7",
     "stateSpace": [
       [0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0]
@@ -125,6 +125,95 @@
     "entities": [
       { "id": 1, "row": 0, "col": 0, "targetRow": 0, "targetCol": 6 },
       { "id": 2, "row": 0, "col": 6, "targetRow": 0, "targetCol": 0 }
+    ]
+  },
+  {
+    "name": "distance 1 pass-by - 2 entities - 6x7",
+    "stateSpaceRows": 6,
+    "stateSpaceCols": 9,
+    "entities": [
+      { "id": 1, "row": 2, "col": 1, "targetRow": 2, "targetCol": 7 },
+      { "id": 2, "row": 3, "col": 7, "targetRow": 3, "targetCol": 1 }
+    ]
+  },
+  {
+    "name": "distance 2 pass-by - 2 entities - 7x7",
+    "stateSpaceRows": 7,
+    "stateSpaceCols": 9,
+    "entities": [
+      { "id": 1, "row": 2, "col": 1, "targetRow": 2, "targetCol": 7 },
+      { "id": 2, "row": 4, "col": 7, "targetRow": 4, "targetCol": 1 }
+    ]
+  },
+  {
+    "name": "distance 1 pass-by - 3 entities - 7x7",
+    "stateSpaceRows": 7,
+    "stateSpaceCols": 9,
+    "entities": [
+      { "id": 1, "row": 2, "col": 1, "targetRow": 2, "targetCol": 7 },
+      { "id": 2, "row": 3, "col": 7, "targetRow": 3, "targetCol": 1 },
+      { "id": 3, "row": 4, "col": 1, "targetRow": 4, "targetCol": 7 }
+    ]
+  },
+  {
+    "name": "move in line - 2 entities - 6x9",
+    "stateSpaceRows": 6,
+    "stateSpaceCols": 9,
+    "entities": [
+      { "id": 1, "row": 2, "col": 1, "targetRow": 2, "targetCol": 7 },
+      { "id": 2, "row": 3, "col": 1, "targetRow": 3, "targetCol": 7 }
+    ]
+  },
+  {
+    "name": "move in line - 3 entities - 7x9",
+    "stateSpaceRows": 7,
+    "stateSpaceCols": 9,
+    "entities": [
+      { "id": 1, "row": 2, "col": 1, "targetRow": 2, "targetCol": 7 },
+      { "id": 2, "row": 3, "col": 1, "targetRow": 3, "targetCol": 7 },
+      { "id": 3, "row": 4, "col": 1, "targetRow": 4, "targetCol": 7 }
+    ]
+  },
+  {
+    "name": "cross in the middle - 2 entities - 7x9",
+    "stateSpaceRows": 9,
+    "stateSpaceCols": 9,
+    "entities": [
+      { "id": 1, "row": 0, "col": 4, "targetRow": 8, "targetCol": 4 },
+      { "id": 2, "row": 4, "col": 0, "targetRow": 4, "targetCol": 8 }
+    ]
+  },
+  {
+    "name": "swap (with overstepping) - 2 entities - 7x3",
+    "stateSpace": [
+      [0, 1, 0],
+      [0, 1, 0],
+      [0, 1, 0],
+      [0, 0, 0],
+      [0, 1, 0],
+      [0, 1, 0],
+      [0, 1, 0]
+    ],
+    "entities": [
+      { "id": 1, "row": 0, "col": 0, "targetRow": 6, "targetCol": 2 },
+      { "id": 2, "row": 6, "col": 2, "targetRow": 0, "targetCol": 0 }
+    ]
+  },
+  {
+    "name": "swap (with overstepping) - 3 entities - 7x3",
+    "stateSpace": [
+      [0, 1, 0],
+      [0, 1, 0],
+      [0, 1, 0],
+      [0, 0, 0],
+      [0, 1, 0],
+      [0, 1, 0],
+      [0, 1, 0]
+    ],
+    "entities": [
+      { "id": 1, "row": 0, "col": 0, "targetRow": 6, "targetCol": 2 },
+      { "id": 2, "row": 6, "col": 2, "targetRow": 0, "targetCol": 0 },
+      { "id": 1, "row": 0, "col": 2, "targetRow": 6, "targetCol": 0 }
     ]
   }
 ]
