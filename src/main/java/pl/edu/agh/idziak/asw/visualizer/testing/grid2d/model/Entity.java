@@ -39,5 +39,7 @@ public class Entity {
         }
     }
 
-
+    @Override public int hashCode() {
+        return id;
+    }
 }
