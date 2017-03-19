@@ -2,7 +2,6 @@ package pl.edu.agh.idziak.asw.visualizer;
 
 import com.google.common.collect.ImmutableList;
 import org.junit.Test;
-import org.openjdk.jmh.annotations.Benchmark;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.io.EntityDTO;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.io.TestCaseDTO;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.io.TestsJsonMapper;
@@ -14,10 +13,6 @@ import java.io.IOException;
  */
 public class SimpleTest {
 
-    @Benchmark
-    public void measureName() {
-
-    }
 
     @Test
     public void test1() throws IOException {

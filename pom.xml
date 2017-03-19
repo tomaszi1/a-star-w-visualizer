@@ -30,12 +30,6 @@
             <version>21.0</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.openjdk.jmh</groupId>
-            <artifactId>jmh-generator-annprocess</artifactId>
-            <version>1.9</version>
-        </dependency>
-
 
         <!-- logging -->
         <dependency>
