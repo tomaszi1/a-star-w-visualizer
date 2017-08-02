@@ -5,15 +5,14 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import pl.edu.agh.idziak.asw.impl.grid2d.G2DCollectiveState;
-import pl.edu.agh.idziak.asw.impl.grid2d.G2DEntityState;
+import pl.edu.agh.idziak.asw.impl.grid2d.GridCollectiveState;
+import pl.edu.agh.idziak.asw.impl.grid2d.GridEntityState;
 import pl.edu.agh.idziak.asw.visualizer.gui.drawing.DrawConstants;
 import pl.edu.agh.idziak.asw.visualizer.gui.drawing.GridParams;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
@@ -41,7 +40,7 @@ public class PathDrawingDelegate {
     }
 
 
-    public void drawPaths(List<G2DCollectiveState> collectivePath, GraphicsContext gc) {
+    public void drawPaths(List<GridCollectiveState> collectivePath, GraphicsContext gc) {
 
         gc.save();
         gc.setLineWidth(2);
@@ -49,26 +48,25 @@ public class PathDrawingDelegate {
 
         countOverlappingLines(collectivePath);
 
-        Set<?> entities = collectivePath.get(0).getEntityStates().keySet();
-
-        drawAllPaths(gc, collectivePath, entities);
+        drawAllPaths(gc, collectivePath);
 
         gc.restore();
     }
 
-    private void drawAllPaths(GraphicsContext gc, List<G2DCollectiveState> collectivePath, Set<?> entities) {
+    private void drawAllPaths(GraphicsContext gc, List<GridCollectiveState> collectivePath) {
+        int entitiesCount = collectivePath.get(0).getEntityStates().size();
 
-        for (Object entity : entities) {
+        for (int entityIndex = 0; entityIndex < entitiesCount; entityIndex++) {
             Color nextColor = colorIterator.next();
             gc.setStroke(nextColor);
             gc.setFill(nextColor);
-            List<G2DEntityState> entityPath = getPathForEntityWithoutStart(collectivePath, entity);
+            List<GridEntityState> entityPath = getPathForEntityWithoutStart(collectivePath, entityIndex);
 
-            G2DEntityState secondLastState = null;
-            G2DEntityState lastState = collectivePath.get(0).getStateForEntity(entity);
+            GridEntityState secondLastState = null;
+            GridEntityState lastState = collectivePath.get(0).getEntityStates().get(entityIndex);
             int lastStatePosX = placeNewLineInColumn(lastState);
             int lastStatePosY = placeNewLineInRow(lastState);
-            for (G2DEntityState newState : entityPath) {
+            for (GridEntityState newState : entityPath) {
                 boolean entityStaysInTheSameRow = isRowEqual(lastState, newState);
                 boolean entityStaysInTheSameColumn = isColumnEqual(lastState, newState);
 
@@ -134,15 +132,14 @@ public class PathDrawingDelegate {
 
     }
 
-    private static List<G2DEntityState> getPathForEntityWithoutStart(List<G2DCollectiveState> collectivePath, Object entity) {
+    private static List<GridEntityState> getPathForEntityWithoutStart(List<GridCollectiveState> collectivePath, int entityIndex) {
         return collectivePath.stream()
-                             .skip(1)
-                             .map(collectiveState -> collectiveState
-                                     .getStateForEntity(entity))
-                             .collect(Collectors.toList());
+                .skip(1)
+                .map(collectiveState -> collectiveState.getEntityStates().get(entityIndex))
+                .collect(Collectors.toList());
     }
 
-    private static boolean isEntityReversingDirection(G2DEntityState secondLastState, G2DEntityState lastState, G2DEntityState newState) {
+    private static boolean isEntityReversingDirection(GridEntityState secondLastState, GridEntityState lastState, GridEntityState newState) {
         return secondLastState != null &&
                 ((isColumnEqual(secondLastState, newState)
                         && !isColumnEqual(lastState, newState))
@@ -150,43 +147,43 @@ public class PathDrawingDelegate {
                         && !isRowEqual(lastState, newState)));
     }
 
-    private static boolean isRowEqual(G2DEntityState state1, G2DEntityState state2) {
-        return state1.getRow().equals(state2.getRow());
+    private static boolean isRowEqual(GridEntityState state1, GridEntityState state2) {
+        return state1.getRow() == state2.getRow();
     }
 
-    private static boolean isColumnEqual(G2DEntityState state1, G2DEntityState state2) {
-        return state1.getCol().equals(state2.getCol());
+    private static boolean isColumnEqual(GridEntityState state1, GridEntityState state2) {
+        return state1.getCol() == state2.getCol();
     }
 
-    private int placeNewLineInColumn(G2DEntityState lastState) {
+    private int placeNewLineInColumn(GridEntityState lastState) {
         Integer column = lastState.getCol();
         Integer newLineIndex = overlappingLinesInColumnCountdown.compute(column, (col, counter) -> counter - 1);
         return gridParams.getTopPosForIndex(column)
                 + gridParams.getCellWidth() / (numOfOverlappingLinesInColumn.get(column) + 1) * (newLineIndex + 1);
     }
 
-    private int placeNewLineInRow(G2DEntityState lastState) {
+    private int placeNewLineInRow(GridEntityState lastState) {
         Integer row = lastState.getRow();
         Integer newLineIndex = overlappingLinesInRowCountdown.compute(row, (col, counter) -> counter - 1);
         return gridParams.getTopPosForIndex(row)
                 + gridParams.getCellWidth() / (numOfOverlappingLinesInRow.get(row) + 1) * (newLineIndex + 1);
     }
 
-    private void countOverlappingLines(List<G2DCollectiveState> collectivePath) {
+    private void countOverlappingLines(List<GridCollectiveState> collectivePath) {
         overlappingLinesInColumnCountdown.clear();
         overlappingLinesInRowCountdown.clear();
 
-        Set<?> entities = collectivePath.get(0).getEntityStates().keySet();
+        int entitiesCount = collectivePath.get(0).getEntityStates().size();
 
-        for (Object entity : entities) {
-            List<G2DEntityState> entityPath = getPathForEntityWithoutStart(collectivePath, entity);
+        for (int entityIndex = 0; entityIndex < entitiesCount; entityIndex++) {
+            List<GridEntityState> entityPath = getPathForEntityWithoutStart(collectivePath, entityIndex);
 
-            G2DEntityState secondLastState = null;
-            G2DEntityState lastState = collectivePath.get(0).getStateForEntity(entity);
+            GridEntityState secondLastState = null;
+            GridEntityState lastState = collectivePath.get(0).getEntityStates().get(entityIndex);
             overlappingLinesInColumnCountdown.compute(lastState.getCol(), getIncrementValueFunction());
             overlappingLinesInRowCountdown.compute(lastState.getRow(), getIncrementValueFunction());
 
-            for (G2DEntityState newState : entityPath) {
+            for (GridEntityState newState : entityPath) {
                 boolean entityStaysInTheSameRow = isRowEqual(lastState, newState);
                 boolean entityStaysInTheSameColumn = isColumnEqual(lastState, newState);
 

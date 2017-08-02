@@ -6,14 +6,15 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
-import pl.edu.agh.idziak.asw.impl.grid2d.G2DEntityState;
+import pl.edu.agh.idziak.asw.impl.grid2d.GridCollectiveState;
+import pl.edu.agh.idziak.asw.impl.grid2d.GridEntityState;
+import pl.edu.agh.idziak.asw.impl.grid2d.GridInputPlan;
 import pl.edu.agh.idziak.asw.visualizer.gui.drawing.DrawConstants;
 import pl.edu.agh.idziak.asw.visualizer.gui.drawing.GridParams;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.model.Entity;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.model.TestCase;
 
 import java.util.Iterator;
-import java.util.Map;
 
 /**
  * Created by Tomasz on 23.02.2017.
@@ -36,29 +37,32 @@ public class EntityDrawingDelegate {
     public void drawEntities(GraphicsContext gc, TestCase testCase) {
         gc.save();
         newColorIterator();
+        GridInputPlan inputPlan = testCase.getInputPlan();
 
-        Map<?, G2DEntityState> currentStates;
+        GridCollectiveState currentState;
         if (testCase.getActiveSimulation() == null) {
-            currentStates = testCase.getInputPlan().getInitialCollectiveState().getEntityStates();
+            currentState = inputPlan.getInitialCollectiveState();
         } else {
-            currentStates = testCase.getActiveSimulation().getCurrentState().getEntityStates();
+            currentState = testCase.getActiveSimulation().getCurrentState();
         }
-        Map<?, G2DEntityState> targetStates = testCase.getInputPlan().getTargetCollectiveState().getEntityStates();
+        GridCollectiveState targetState = inputPlan.getTargetCollectiveState();
 
-        for (Map.Entry<?, G2DEntityState> entry : currentStates.entrySet()) {
-            Object entity = entry.getKey();
-
+        for (Object entity : inputPlan.getEntities()) {
             Color color = colorIterator.next();
             gc.setStroke(color);
             gc.setFill(color);
-            drawInitialEntityState(entity, entry.getValue(), gc);
-            drawTargetEntityState(targetStates.get(entity), gc);
+
+            GridEntityState currentEntityState = inputPlan.getStateForEntity(currentState, entity);
+            GridEntityState targetEntityState = inputPlan.getStateForEntity(targetState, entity);
+
+            drawInitialEntityState(entity, currentEntityState, gc);
+            drawTargetEntityState(targetEntityState, gc);
         }
 
         gc.restore();
     }
 
-    private void drawTargetEntityState(G2DEntityState state, GraphicsContext gc) {
+    private void drawTargetEntityState(GridEntityState state, GraphicsContext gc) {
         gc.save();
         int leftX = getTopPosForIndex(state.getCol());
         int topY = getTopPosForIndex(state.getRow());
@@ -83,7 +87,7 @@ public class EntityDrawingDelegate {
         return gridParams.getTopPosForIndex(col);
     }
 
-    private void drawInitialEntityState(Object entity, G2DEntityState state, GraphicsContext gc) {
+    private void drawInitialEntityState(Object entity, GridEntityState state, GraphicsContext gc) {
         gc.save();
         int leftX = getCellWidth() * state.getCol();
         int topY = getCellWidth() * state.getRow();

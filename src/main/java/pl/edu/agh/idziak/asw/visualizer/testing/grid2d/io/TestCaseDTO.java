@@ -12,6 +12,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({"name", "stateSpace", "stateSpaceRows", "stateSpaceCols", "entities"})
 public class TestCaseDTO {
+    private Integer id;
     private String name;
     private int[][] stateSpace;
     private Integer stateSpaceRows;
@@ -27,6 +28,10 @@ public class TestCaseDTO {
         stateSpaceCols = builder.stateSpaceCols;
         entities = builder.entities;
         name = builder.name;
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     public static Builder newBuilder() {

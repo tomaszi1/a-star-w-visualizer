@@ -35,6 +35,7 @@
             <Button fx:id="buttonScaleUp" text="Scale up"/>
             <Button fx:id="buttonScaleDown" text="Scale down"/>
             <Button fx:id="buttonQuickSaveCanvas" text="Quick-save canvas"/>
+            <Button fx:id="buttonStartBenchmark" text="Start benchmark"/>
         </ToolBar>
     </bottom>
 </BorderPane>

@@ -16,6 +16,7 @@ import pl.edu.agh.idziak.asw.visualizer.gui.root.DialogDisplay;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.io.DTOMapper;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.io.TestCaseDTO;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.model.TestCase;
+import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.io.TestLoader;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,12 +36,14 @@ public class TestController {
     private DialogDisplay dialogDisplay;
     private TestExecutor testExecutor;
     private File currentTestsFile;
+    private BenchmarkExecutor benchmarkExecutor;
 
     private final ObservableList<TestCase> testCases;
     private final SimpleStringProperty activeTestFileNameProperty;
     private final SimpleObjectProperty<TestCase> activeTestCase;
 
     public TestController() {
+        benchmarkExecutor = new BenchmarkExecutor();
         testLoader = new TestLoader();
         dialogDisplay = new DialogDisplay();
         testCases = FXCollections.observableArrayList();
@@ -103,13 +106,21 @@ public class TestController {
     }
 
     private final ExecutionObserver executionObserver = new ExecutionObserver() {
-        @Override public void executionFailed(Throwable e) {
+        @Override
+        public void executionFailed(Throwable e) {
             dialogDisplay.displayException("Test execution failed", e);
             LOG.error("Test exec failed", e);
         }
 
-        @Override public void executionSucceeded(TestCase testCase) {
+        @Override
+        public void executionSucceeded(TestCase testCase) {
         }
     };
 
+    public void executeBenchmark() {
+        if (activeTestCase.get() == null) {
+            LOG.info("Null test case, no execution");
+        }
+        benchmarkExecutor.startBenchmark(currentTestsFile.getAbsolutePath(), activeTestCase.get().getId());
+    }
 }

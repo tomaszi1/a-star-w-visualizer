@@ -12,11 +12,13 @@ import javafx.scene.paint.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.edu.agh.idziak.asw.impl.ExtendedOutputPlan;
-import pl.edu.agh.idziak.asw.impl.grid2d.G2DCollectiveState;
-import pl.edu.agh.idziak.asw.impl.grid2d.G2DEntityState;
-import pl.edu.agh.idziak.asw.impl.grid2d.G2DStateSpace;
-import pl.edu.agh.idziak.asw.impl.grid2d.G2DSubspace;
+import pl.edu.agh.idziak.asw.impl.grid2d.GridCollectiveState;
+import pl.edu.agh.idziak.asw.impl.grid2d.GridDeviationSubspace;
+import pl.edu.agh.idziak.asw.impl.grid2d.GridEntityState;
+import pl.edu.agh.idziak.asw.impl.grid2d.GridStateSpace;
+import pl.edu.agh.idziak.asw.model.CollectivePath;
 import pl.edu.agh.idziak.asw.visualizer.GlobalEventBus;
+import pl.edu.agh.idziak.asw.visualizer.gui.drawing.DrawConstants;
 import pl.edu.agh.idziak.asw.visualizer.gui.drawing.GridParams;
 import pl.edu.agh.idziak.asw.visualizer.gui.drawing.devzone.DevZoneCellDrawingDelegate;
 import pl.edu.agh.idziak.asw.visualizer.gui.drawing.entity.EntityDrawingDelegate;
@@ -25,8 +27,6 @@ import pl.edu.agh.idziak.asw.visualizer.gui.drawing.simulation.NewSimulationEven
 import pl.edu.agh.idziak.asw.visualizer.gui.drawing.simulation.Simulation;
 import pl.edu.agh.idziak.asw.visualizer.gui.drawing.simulation.SimulationStateChangedEvent;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.model.TestCase;
-
-import java.util.List;
 
 /**
  * Created by Tomasz on 28.08.2016.
@@ -41,7 +41,7 @@ public class GridCanvasController {
 
     private GridParams gridParams = new GridParams();
 
-    private final ChangeListener<ExtendedOutputPlan<G2DStateSpace, G2DCollectiveState>> outputPlanChangeListener
+    private final ChangeListener<ExtendedOutputPlan<GridStateSpace, GridCollectiveState>> outputPlanChangeListener
             = (obs, oldVal, newVal) -> repaint();
 
     private PathDrawingDelegate pathDrawingDelegate;
@@ -115,19 +115,19 @@ public class GridCanvasController {
             return;
         }
         currentTestCase.getActiveSimulation()
-                       .getOutputPlan()
-                       .getSubspacePlans()
-                       .forEach(devZonePlan -> {
-                           if (devZonePlan.getSubspace() instanceof G2DSubspace) {
-                               ((G2DSubspace) devZonePlan.getSubspace())
-                                       .getContainedEntityStates()
-                                       .forEach(entityState -> drawDevZoneEntityState(gc, entityState));
-                           }
-                           devZoneCellDrawingDelegate.switchPattern();
-                       });
+                .getOutputPlan()
+                .getDeviationSubspacePlans()
+                .forEach(devZonePlan -> {
+                    if (devZonePlan.getDeviationSubspace() instanceof GridDeviationSubspace) {
+                        ((GridDeviationSubspace) devZonePlan.getDeviationSubspace())
+                                .getContainedEntityStates()
+                                .forEach(entityState -> drawDevZoneEntityState(gc, entityState));
+                    }
+                    devZoneCellDrawingDelegate.switchPattern();
+                });
     }
 
-    private void drawDevZoneEntityState(GraphicsContext gc, G2DEntityState state) {
+    private void drawDevZoneEntityState(GraphicsContext gc, GridEntityState state) {
         gc.save();
         int topY = getTopPosForIndex(state.getRow());
         int bottomY = getTopPosForIndex(state.getRow() + 1);
@@ -148,9 +148,9 @@ public class GridCanvasController {
         gc.clip();
     }
 
-    private void drawStateSpace(GraphicsContext gc, G2DStateSpace stateSpace) {
-        int rows = stateSpace.countRows();
-        int cols = stateSpace.countCols();
+    private void drawStateSpace(GraphicsContext gc, GridStateSpace stateSpace) {
+        int rows = stateSpace.getRows();
+        int cols = stateSpace.getCols();
 
         canvas.setWidth(getCellWidth() * cols);
         canvas.setHeight(getCellWidth() * rows);
@@ -178,11 +178,11 @@ public class GridCanvasController {
         gc.restore();
     }
 
-    private void drawObstacles(GraphicsContext gc, G2DStateSpace stateSpace) {
+    private void drawObstacles(GraphicsContext gc, GridStateSpace stateSpace) {
         gc.save();
-        gc.setFill(Color.DARKRED);
+        gc.setFill(DrawConstants.OBSTACLE_COLOR);
 
-        int[][] gridArray = stateSpace.getGridArray();
+        int[][] gridArray = stateSpace.getGridIntegerArray();
 
         int obstacleWidth = getObstacleWidth();
         int offset = (getCellWidth() - obstacleWidth) / 2;
@@ -205,12 +205,16 @@ public class GridCanvasController {
             return;
         }
         if (activeSimulation.isReset()) {
-            List<G2DCollectiveState> collectivePath = activeSimulation.getOutputPlan().getCollectivePath().get();
-            pathDrawingDelegate.drawPaths(collectivePath, gc);
+            CollectivePath<GridCollectiveState> collectivePath = activeSimulation.getOutputPlan().getCollectivePath();
+            if (collectivePath != null) {
+                pathDrawingDelegate.drawPaths(collectivePath.get(), gc);
+            } else {
+                LOG.info("No path to draw");
+            }
         } else {
-            G2DCollectiveState nextState = activeSimulation.getEffectiveNextState();
+            GridCollectiveState nextState = activeSimulation.getEffectiveNextState();
             if (nextState != null) {
-                ImmutableList<G2DCollectiveState> nextStepPathFragment = ImmutableList.of(
+                ImmutableList<GridCollectiveState> nextStepPathFragment = ImmutableList.of(
                         activeSimulation.getCurrentState(),
                         nextState
                 );

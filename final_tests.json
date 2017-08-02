@@ -1,0 +1,24 @@
+[
+  {
+    "id": 1,
+    "name": "7x7 - 4 entities",
+    "stateSpaceRows": 7,
+    "stateSpaceCols": 7,
+    "entities": [
+      { "id": 1, "row": 0, "col": 0, "targetRow": 6, "targetCol": 6 },
+      { "id": 2, "row": 6, "col": 6, "targetRow": 0, "targetCol": 0 },
+      { "id": 3, "row": 0, "col": 6, "targetRow": 6, "targetCol": 0 },
+      { "id": 4, "row": 6, "col": 0, "targetRow": 0, "targetCol": 6 }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "distance 2 pass-by - 2 entities - 7x7",
+    "stateSpaceRows": 7,
+    "stateSpaceCols": 9,
+    "entities": [
+      { "id": 1, "row": 2, "col": 1, "targetRow": 2, "targetCol": 7 },
+      { "id": 2, "row": 4, "col": 7, "targetRow": 4, "targetCol": 1 }
+    ]
+  }
+]

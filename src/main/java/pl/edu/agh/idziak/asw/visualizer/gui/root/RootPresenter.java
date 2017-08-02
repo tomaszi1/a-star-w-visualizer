@@ -43,6 +43,7 @@ public class RootPresenter implements Initializable {
     @FXML private Button buttonScaleUp;
     @FXML private Button buttonScaleDown;
     @FXML private Button buttonQuickSaveCanvas;
+    @FXML private Button buttonStartBenchmark;
     @FXML private ListView<TestCase> testCaseListView;
     @FXML private Window window;
 
@@ -87,6 +88,7 @@ public class RootPresenter implements Initializable {
             WritableImage writableImage = gridCanvasController.snapshotCanvas();
             imageWriter.writeImageToDefaultLocation(writableImage);
         });
+        buttonStartBenchmark.setOnAction(event -> testController.executeBenchmark());
     }
 
     private void buttonOpenTestsClicked() {

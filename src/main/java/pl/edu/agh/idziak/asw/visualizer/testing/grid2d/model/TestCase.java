@@ -1,9 +1,10 @@
 package pl.edu.agh.idziak.asw.visualizer.testing.grid2d.model;
 
-import pl.edu.agh.idziak.asw.impl.ExtendedOutputPlan;
-import pl.edu.agh.idziak.asw.impl.grid2d.G2DCollectiveState;
-import pl.edu.agh.idziak.asw.impl.grid2d.G2DInputPlan;
-import pl.edu.agh.idziak.asw.impl.grid2d.G2DStateSpace;
+import com.google.common.base.MoreObjects;
+import pl.edu.agh.idziak.asw.impl.grid2d.GridCollectiveState;
+import pl.edu.agh.idziak.asw.impl.grid2d.GridInputPlan;
+import pl.edu.agh.idziak.asw.impl.grid2d.GridStateSpace;
+import pl.edu.agh.idziak.asw.model.ASWOutputPlan;
 import pl.edu.agh.idziak.asw.visualizer.GlobalEventBus;
 import pl.edu.agh.idziak.asw.visualizer.gui.drawing.simulation.NewSimulationEvent;
 import pl.edu.agh.idziak.asw.visualizer.gui.drawing.simulation.Simulation;
@@ -13,19 +14,22 @@ import pl.edu.agh.idziak.asw.visualizer.gui.drawing.simulation.Simulation;
  */
 public class TestCase {
 
-    private G2DInputPlan inputPlan;
+    private GridInputPlan inputPlan;
     private String name;
-    private boolean sparseDefinition;
+    private Integer id;
     private Simulation simulation;
-    private ExtendedOutputPlan<G2DStateSpace, G2DCollectiveState> outputPlan;
 
-    public TestCase(String name, G2DInputPlan inputPlan, boolean sparseDefinition) {
+    public TestCase(String name, GridInputPlan inputPlan, Integer id) {
         this.name = name;
         this.inputPlan = inputPlan;
-        this.sparseDefinition = sparseDefinition;
+        this.id = id;
     }
 
-    public G2DInputPlan getInputPlan() {
+    public Integer getId() {
+        return id;
+    }
+
+    public GridInputPlan getInputPlan() {
         return inputPlan;
     }
 
@@ -41,21 +45,20 @@ public class TestCase {
         this.name = name;
     }
 
-    public boolean isSparseDefinition() {
-        return sparseDefinition;
-    }
-
     public Simulation getActiveSimulation() {
         return simulation;
     }
 
-    public void setOutputPlan(ExtendedOutputPlan<G2DStateSpace, G2DCollectiveState> outputPlan) {
-        simulation = new Simulation(inputPlan, outputPlan.getOutputPlan());
-        this.outputPlan = outputPlan;
+    public void setOutputPlan(ASWOutputPlan<GridStateSpace, GridCollectiveState> outputPlan) {
+        simulation = new Simulation(inputPlan, outputPlan);
         publishNewSimulationEvent();
     }
 
-    public ExtendedOutputPlan<G2DStateSpace, G2DCollectiveState> getExtendedOutputPlan() {
-        return outputPlan;
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("name", name)
+                .add("id", id)
+                .toString();
     }
 }

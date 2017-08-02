@@ -6,12 +6,8 @@ package pl.edu.agh.idziak.asw.visualizer.testing.grid2d.model;
 public class Entity {
     private Integer id;
 
-    private Entity(Builder builder) {
-        id = builder.id;
-    }
-
-    public static Builder newBuilder() {
-        return new Builder();
+    public Entity(Integer id) {
+        this.id = id;
     }
 
     public Integer getId() {
@@ -23,23 +19,14 @@ public class Entity {
         return "E" + id;
     }
 
-    public static final class Builder {
-        private Integer id;
-
-        private Builder() {
-        }
-
-        public Builder id(Integer val) {
-            id = val;
-            return this;
-        }
-
-        public Entity build() {
-            return new Entity(this);
-        }
-    }
-
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return id;
     }
+
+    public static Entity of(Integer id) {
+        return new Entity(id);
+    }
+
+
 }

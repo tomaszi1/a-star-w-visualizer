@@ -17,7 +17,7 @@
                 <Button fx:id="simulationNextStep" text="Next step" GridPane.rowIndex="1" GridPane.columnIndex="0" />
                 <Button fx:id="simulationPreviousStep" text="Previous step" GridPane.rowIndex="2" GridPane.columnIndex="0" />
                 <ListView fx:id="deviationTriggersListView" GridPane.rowIndex="3" GridPane.columnIndex="0" prefHeight="200" />
-                <Label text="Benchmark:" GridPane.rowIndex="4" GridPane.columnIndex="0" />
+                <Label text="BenchmarkRun:" GridPane.rowIndex="4" GridPane.columnIndex="0" />
                 <Label fx:id="labelStatistics" GridPane.rowIndex="5" GridPane.columnIndex="0" />
             </GridPane>
         </ScrollPane>

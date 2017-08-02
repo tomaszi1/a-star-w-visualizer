@@ -1,7 +1,4 @@
-package pl.edu.agh.idziak.asw.visualizer.testing;
-
-import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.io.TestCaseDTO;
-import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.io.TestsJsonMapper;
+package pl.edu.agh.idziak.asw.visualizer.testing.grid2d.io;
 
 import java.io.*;
 import java.util.List;
@@ -20,11 +17,6 @@ public class TestLoader {
     public List<TestCaseDTO> openTestsFile(File file) throws IOException {
         InputStream inputStream = new BufferedInputStream(new FileInputStream(file));
         return testsJsonMapper.readTests(inputStream);
-    }
-
-    public void writeTestsFile(File file, List<TestCaseDTO> testCaseDTOs) throws IOException {
-        OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file));
-        testsJsonMapper.writeTests(outputStream, testCaseDTOs);
     }
 
 }
