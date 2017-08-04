@@ -13,20 +13,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.edu.agh.idziak.asw.impl.ExtendedOutputPlan;
 import pl.edu.agh.idziak.asw.impl.grid2d.GridCollectiveState;
+import pl.edu.agh.idziak.asw.impl.grid2d.GridCollectiveStateSpace;
 import pl.edu.agh.idziak.asw.impl.grid2d.GridDeviationSubspace;
 import pl.edu.agh.idziak.asw.impl.grid2d.GridEntityState;
-import pl.edu.agh.idziak.asw.impl.grid2d.GridStateSpace;
 import pl.edu.agh.idziak.asw.model.CollectivePath;
 import pl.edu.agh.idziak.asw.visualizer.GlobalEventBus;
 import pl.edu.agh.idziak.asw.visualizer.gui.drawing.DrawConstants;
 import pl.edu.agh.idziak.asw.visualizer.gui.drawing.GridParams;
-import pl.edu.agh.idziak.asw.visualizer.gui.drawing.devzone.DevZoneCellDrawingDelegate;
 import pl.edu.agh.idziak.asw.visualizer.gui.drawing.entity.EntityDrawingDelegate;
 import pl.edu.agh.idziak.asw.visualizer.gui.drawing.entity.PathDrawingDelegate;
+import pl.edu.agh.idziak.asw.visualizer.gui.drawing.entity.PathDrawingDelegateImpl;
 import pl.edu.agh.idziak.asw.visualizer.gui.drawing.simulation.NewSimulationEvent;
 import pl.edu.agh.idziak.asw.visualizer.gui.drawing.simulation.Simulation;
 import pl.edu.agh.idziak.asw.visualizer.gui.drawing.simulation.SimulationStateChangedEvent;
+import pl.edu.agh.idziak.asw.visualizer.gui.drawing.subspace.SubspaceCellDrawingDelegate;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.model.TestCase;
+import pl.edu.agh.idziak.asw.wavefront.DeviationSubspacePlan;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Created by Tomasz on 28.08.2016.
@@ -41,20 +47,20 @@ public class GridCanvasController {
 
     private GridParams gridParams = new GridParams();
 
-    private final ChangeListener<ExtendedOutputPlan<GridStateSpace, GridCollectiveState>> outputPlanChangeListener
+    private final ChangeListener<ExtendedOutputPlan<GridCollectiveStateSpace, GridCollectiveState>> outputPlanChangeListener
             = (obs, oldVal, newVal) -> repaint();
 
     private PathDrawingDelegate pathDrawingDelegate;
     private EntityDrawingDelegate entityDrawingDelegate;
-    private DevZoneCellDrawingDelegate devZoneCellDrawingDelegate;
+    private SubspaceCellDrawingDelegate subspaceCellDrawingDelegate;
 
     public GridCanvasController(Canvas canvas, ObservableObjectValue<TestCase>
             testCaseObjectProperty, CanvasMouseEventsDispatcher canvasMouseEventsDispatcher) {
         this.canvas = canvas;
         this.canvasMouseEventsDispatcher = canvasMouseEventsDispatcher;
-        this.devZoneCellDrawingDelegate = new DevZoneCellDrawingDelegate();
+        this.subspaceCellDrawingDelegate = new SubspaceCellDrawingDelegate();
         this.entityDrawingDelegate = new EntityDrawingDelegate(gridParams);
-        this.pathDrawingDelegate = new PathDrawingDelegate(gridParams);
+        this.pathDrawingDelegate = new PathDrawingDelegateImpl(gridParams);
 
         testCaseObjectProperty.addListener((observable, oldValue, newTestCase) -> {
             currentTestCase = newTestCase;
@@ -109,7 +115,7 @@ public class GridCanvasController {
     }
 
     private void drawDeviationZones(GraphicsContext gc) {
-        devZoneCellDrawingDelegate.resetState();
+        subspaceCellDrawingDelegate.resetState();
 
         if (currentTestCase.getActiveSimulation() == null) {
             return;
@@ -117,17 +123,32 @@ public class GridCanvasController {
         currentTestCase.getActiveSimulation()
                 .getOutputPlan()
                 .getDeviationSubspacePlans()
-                .forEach(devZonePlan -> {
-                    if (devZonePlan.getDeviationSubspace() instanceof GridDeviationSubspace) {
-                        ((GridDeviationSubspace) devZonePlan.getDeviationSubspace())
-                                .getContainedEntityStates()
-                                .forEach(entityState -> drawDevZoneEntityState(gc, entityState));
-                    }
-                    devZoneCellDrawingDelegate.switchPattern();
-                });
+                .stream()
+                .filter(plan -> plan.getDeviationSubspace() instanceof GridDeviationSubspace)
+                .sorted(comparing(this::getSortingKeyForDevSubspacePlan))
+                .forEachOrdered(devSubspacePlan -> drawSingleDevSubspacePlan(gc, devSubspacePlan));
     }
 
-    private void drawDevZoneEntityState(GraphicsContext gc, GridEntityState state) {
+    private String getSortingKeyForDevSubspacePlan(DeviationSubspacePlan<GridCollectiveState> plan) {
+        checkArgument(GridDeviationSubspace.class.isInstance(plan.getDeviationSubspace()));
+        return ((GridDeviationSubspace) plan.getDeviationSubspace()).getContainedEntityStates()
+                .stream()
+                .sorted(comparing(GridEntityState::toString))
+                .collect(toList())
+                .toString();
+    }
+
+    private void drawSingleDevSubspacePlan(GraphicsContext gc, DeviationSubspacePlan<GridCollectiveState> devSubspacePlan) {
+        if (devSubspacePlan.getDeviationSubspace() instanceof GridDeviationSubspace) {
+            LOG.debug("Drawing subspace");
+            ((GridDeviationSubspace) devSubspacePlan.getDeviationSubspace())
+                    .getContainedEntityStates()
+                    .forEach(entityState -> drawDevSubspaceSquare(gc, entityState));
+        }
+        subspaceCellDrawingDelegate.switchPattern();
+    }
+
+    private void drawDevSubspaceSquare(GraphicsContext gc, GridEntityState state) {
         gc.save();
         int topY = getTopPosForIndex(state.getRow());
         int bottomY = getTopPosForIndex(state.getRow() + 1);
@@ -136,8 +157,8 @@ public class GridCanvasController {
 
         clipRect(gc, leftX + 1, topY - 1, getCellWidth() - 2, getCellWidth() - 2);
 
-        devZoneCellDrawingDelegate.setCellBounds(topY, leftX, bottomY, rightX);
-        devZoneCellDrawingDelegate.drawDevZone(gc);
+        subspaceCellDrawingDelegate.setCellBounds(topY, leftX, bottomY, rightX);
+        subspaceCellDrawingDelegate.drawDeviationSubspace(gc);
         gc.restore();
     }
 
@@ -148,7 +169,7 @@ public class GridCanvasController {
         gc.clip();
     }
 
-    private void drawStateSpace(GraphicsContext gc, GridStateSpace stateSpace) {
+    private void drawStateSpace(GraphicsContext gc, GridCollectiveStateSpace stateSpace) {
         int rows = stateSpace.getRows();
         int cols = stateSpace.getCols();
 
@@ -178,7 +199,7 @@ public class GridCanvasController {
         gc.restore();
     }
 
-    private void drawObstacles(GraphicsContext gc, GridStateSpace stateSpace) {
+    private void drawObstacles(GraphicsContext gc, GridCollectiveStateSpace stateSpace) {
         gc.save();
         gc.setFill(DrawConstants.OBSTACLE_COLOR);
 
@@ -207,7 +228,7 @@ public class GridCanvasController {
         if (activeSimulation.isReset()) {
             CollectivePath<GridCollectiveState> collectivePath = activeSimulation.getOutputPlan().getCollectivePath();
             if (collectivePath != null) {
-                pathDrawingDelegate.drawPaths(collectivePath.get(), gc);
+                pathDrawingDelegate.drawPaths(activeSimulation.getInputPlan(), activeSimulation.getOutputPlan(), gc);
             } else {
                 LOG.info("No path to draw");
             }
@@ -218,7 +239,6 @@ public class GridCanvasController {
                         activeSimulation.getCurrentState(),
                         nextState
                 );
-                pathDrawingDelegate.drawPaths(nextStepPathFragment, gc);
             }
         }
     }

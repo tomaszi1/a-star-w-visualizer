@@ -1,5 +1,6 @@
 [
   {
+    "id": 1,
     "name": "7x7 - 1 entity",
     "stateSpaceRows": 7,
     "stateSpaceCols": 7,
@@ -8,6 +9,7 @@
     ]
   },
   {
+    "id": 2,
     "name": "7x7 - 2 entities",
     "stateSpaceRows": 7,
     "stateSpaceCols": 7,
@@ -17,6 +19,7 @@
     ]
   },
   {
+    "id": 3,
     "name": "7x7 - 3 entities",
     "stateSpaceRows": 7,
     "stateSpaceCols": 7,
@@ -27,6 +30,7 @@
     ]
   },
   {
+    "id": 4,
     "name": "7x7 - 4 entities",
     "stateSpaceRows": 7,
     "stateSpaceCols": 7,
@@ -38,6 +42,7 @@
     ]
   },
   {
+    "id": 5,
     "name": "7x7 - 5 entities",
     "stateSpaceRows": 7,
     "stateSpaceCols": 7,
@@ -50,6 +55,7 @@
     ]
   },
   {
+    "id": 6,
     "name": "7x7 - 6 entities",
     "stateSpaceRows": 7,
     "stateSpaceCols": 7,
@@ -63,6 +69,7 @@
     ]
   },
   {
+    "id": 7,
     "name": "7x7 - 7 entities",
     "stateSpaceRows": 7,
     "stateSpaceCols": 7,
@@ -77,6 +84,7 @@
     ]
   },
   {
+    "id": 8,
     "name": "5x5 - 6 entities",
     "stateSpaceRows": 5,
     "stateSpaceCols": 5,
@@ -90,6 +98,7 @@
     ]
   },
   {
+    "id": 9,
     "name": "confined swap - 2 entities - 7x2",
     "stateSpace": [
       [0, 1],
@@ -232,6 +241,44 @@
       { "id": 2, "row": 6, "col": 2, "targetRow": 0, "targetCol": 0 },
       { "id": 3, "row": 0, "col": 2, "targetRow": 6, "targetCol": 0 },
       { "id": 4, "row": 6, "col": 0, "targetRow": 0, "targetCol": 2 }
+    ]
+  },
+  {
+    "id": 4957935,
+    "name": "9x9 - 5 entities",
+    "stateSpaceRows": 9,
+    "stateSpaceCols": 9,
+    "entities": [
+      { "id": 1, "row": 0, "col": 0, "targetRow": 8, "targetCol": 8 },
+      { "id": 2, "row": 8, "col": 8, "targetRow": 0, "targetCol": 0 },
+      { "id": 3, "row": 0, "col": 8, "targetRow": 8, "targetCol": 0 },
+      { "id": 4, "row": 8, "col": 0, "targetRow": 0, "targetCol": 8 },
+      { "id": 5, "row": 4, "col": 0, "targetRow": 4, "targetCol": 8 }
+    ]
+  },
+  {
+    "id": 939857,
+    "name": "9x9 - 4 entities",
+    "stateSpaceRows": 9,
+    "stateSpaceCols": 9,
+    "entities": [
+      { "id": 1, "row": 0, "col": 0, "targetRow": 8, "targetCol": 8 },
+      { "id": 2, "row": 8, "col": 8, "targetRow": 0, "targetCol": 0 },
+      { "id": 3, "row": 0, "col": 8, "targetRow": 8, "targetCol": 0 },
+      { "id": 4, "row": 8, "col": 0, "targetRow": 0, "targetCol": 8 }
+    ]
+  },
+  {
+    "id": 67346285,
+    "name": "9x9 - 5 entities, clockwise swap",
+    "stateSpaceRows": 9,
+    "stateSpaceCols": 9,
+    "entities": [
+      { "id": 1, "row": 0, "col": 0, "targetRow": 4, "targetCol": 0 },
+      { "id": 2, "row": 4, "col": 0, "targetRow": 8, "targetCol": 0 },
+      { "id": 3, "row": 8, "col": 0, "targetRow": 8, "targetCol": 4 },
+      { "id": 4, "row": 8, "col": 4, "targetRow": 8, "targetCol": 8 },
+      { "id": 5, "row": 8, "col": 8, "targetRow": 4, "targetCol": 8 }
     ]
   }
 ]

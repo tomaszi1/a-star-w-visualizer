@@ -6,14 +6,14 @@ import javafx.beans.value.ObservableObjectValue;
 import javafx.concurrent.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.edu.agh.idziak.asw.astar.CurrentStateMonitor;
+import pl.edu.agh.idziak.asw.astar.AStarIterationData;
+import pl.edu.agh.idziak.asw.astar.AStarStateMonitor;
 import pl.edu.agh.idziak.asw.common.Statistics;
 import pl.edu.agh.idziak.asw.impl.AlgorithmType;
 import pl.edu.agh.idziak.asw.impl.grid2d.*;
 import pl.edu.agh.idziak.asw.model.ASWOutputPlan;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.model.TestCase;
 
-import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -39,26 +39,28 @@ public class TestExecutor {
         gridASWPlanner = new GridASWPlanner();
         gridASWPlanner.setAStarCurrentStateMonitor(new AStarMonitor());
         gridAStarOnlyPlanner = new GridAStarOnlyPlanner();
+        gridAStarOnlyPlanner.setAStarCurrentStateMonitor(new AStarMonitor());
         gridWavefrontOnlyPlanner = new GridWavefrontOnlyPlanner();
-        executorService = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().setDaemon(true).build());
+        executorService = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder()
+                .setDaemon(true)
+                .setNameFormat("algorithmExecutionThread")
+                .build());
     }
 
-    
 
-    private static class AStarMonitor implements CurrentStateMonitor<GridCollectiveState> {
-        private int iterations = 0;
+    private static class AStarMonitor implements AStarStateMonitor<GridCollectiveState> {
+
 
         @Override
-        public void accept(GridCollectiveState currentState, Collection<GridCollectiveState> neighbors,
-                           int openSetSize, int closedSetSize) {
-            if (iterations++ % 100 == 0) {
-                if (LOG.isDebugEnabled())
-                    LOG.debug("iterations={}, openSet={}, closedSet={}", iterations, openSetSize, closedSetSize);
+        public void onIteration(AStarIterationData<GridCollectiveState> aStarIterationData) {
+            if (aStarIterationData.getClosedSetSize() % 10 == 0) {
+                LOG.info("openSet={}, closedSet={}", aStarIterationData.getOpenSetSize(), aStarIterationData.getClosedSetSize());
             }
         }
 
-        private void reset() {
-            iterations = 0;
+        @Override
+        public void onSuccess(int closedSetSize, int openSetSize) {
+            LOG.info("A* statistics: closedSetSize={}, openSetSize={}", closedSetSize, openSetSize);
         }
     }
 
@@ -70,7 +72,7 @@ public class TestExecutor {
         executorService.submit(testExecutionTask);
     }
 
-    private ASWOutputPlan<GridStateSpace, GridCollectiveState> executeTestWithGivenStrategy(GridInputPlan inputPlan, AlgorithmType algorithmType) {
+    private ASWOutputPlan<GridCollectiveStateSpace, GridCollectiveState> executeTestWithGivenStrategy(GridInputPlan inputPlan, AlgorithmType algorithmType) {
         switch (algorithmType) {
             case ASW:
                 return gridASWPlanner.calculatePlan(inputPlan);
@@ -90,7 +92,7 @@ public class TestExecutor {
 
         private final TestCase testCase;
         private AlgorithmType algorithmType;
-        private ASWOutputPlan<GridStateSpace, GridCollectiveState> outputPlan;
+        private ASWOutputPlan<GridCollectiveStateSpace, GridCollectiveState> outputPlan;
 
         private TestExecutionTask(TestCase testCase, AlgorithmType algorithmType) {
             this.testCase = testCase;

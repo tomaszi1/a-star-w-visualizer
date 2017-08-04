@@ -15,7 +15,8 @@ public class BenchmarkExecutor {
     public void startBenchmark(String filePath, int id) {
         Collection<RunResult> results = BenchmarkRun.build()
                 .benchmarkClass(ASWStandardBenchmark.class)
-                .debugMode(true)
+                .debugMode(false)
+                .profileStack(true)
                 .args(ImmutableMap.of(
                         ASWStandardBenchmark.PARAM_FILE_PATH, filePath,
                         ASWStandardBenchmark.PARAM_TEST_CASE_ID, String.valueOf(id)

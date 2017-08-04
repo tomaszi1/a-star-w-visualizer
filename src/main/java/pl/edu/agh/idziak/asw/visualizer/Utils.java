@@ -22,4 +22,11 @@ public class Utils {
         }
         return true;
     }
+
+    public static <R> R tryCast(Object obj, Class<R> clazz) {
+        if (clazz.isInstance(obj)) {
+            return clazz.cast(obj);
+        }
+        return null;
+    }
 }

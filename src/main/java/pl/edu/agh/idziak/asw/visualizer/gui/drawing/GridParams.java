@@ -43,6 +43,22 @@ public class GridParams {
     }
 
     public double getStopDotSize() {
-        return 5 * scaleFactor;
+        return DrawConstants.ENTITY_STOP_DOT_SIZE * scaleFactor;
+    }
+
+    public double getPathPointCircleDiameter(int overlaps) {
+        if (overlaps <= 1) {
+            return getCellWidth() * 0.6;
+        }
+        if (overlaps <= 2) {
+            return getCellWidth() * 0.5;
+        }
+        if (overlaps <= 4) {
+            return getCellWidth() * 0.4;
+        }
+        if (overlaps <= 9) {
+            return getCellWidth() * 0.3;
+        }
+        throw new IllegalStateException();
     }
 }

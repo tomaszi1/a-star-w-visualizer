@@ -2,7 +2,8 @@ package pl.edu.agh.idziak.asw.visualizer.testing.grid2d.io;
 
 import pl.edu.agh.idziak.asw.impl.grid2d.GridCollectiveState;
 import pl.edu.agh.idziak.asw.impl.grid2d.GridInputPlan;
-import pl.edu.agh.idziak.asw.impl.grid2d.GridStateSpace;
+import pl.edu.agh.idziak.asw.impl.grid2d.GridCollectiveStateSpace;
+import pl.edu.agh.idziak.asw.impl.grid2d.NeighborhoodType;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.model.Entity;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.model.TestCase;
 
@@ -18,7 +19,7 @@ public class DTOMapper {
 
     public static TestCase dtoToInternal(TestCaseDTO testCaseDTO) {
         List<EntityDTO> entityDtos = testCaseDTO.getEntities();
-        GridStateSpace stateSpace = mapStateSpace(testCaseDTO);
+        GridCollectiveStateSpace stateSpace = mapStateSpace(testCaseDTO);
 
         entityDtos.sort(comparing(EntityDTO::getId));
 
@@ -42,22 +43,22 @@ public class DTOMapper {
         GridCollectiveState initialState = new GridCollectiveState(initialEntityStates);
         GridCollectiveState targetState = new GridCollectiveState(targetEntityStates);
 
-        GridInputPlan gridInputPlan = new GridInputPlan(entities, stateSpace, initialState, targetState);
+        GridInputPlan gridInputPlan = new GridInputPlan(entities, stateSpace, initialState, targetState, NeighborhoodType.VON_NEUMANN);
 
         return new TestCase(testCaseDTO.getName(), gridInputPlan, testCaseDTO.getId());
     }
 
-    private static GridStateSpace mapStateSpace(TestCaseDTO testCaseDTO) {
-        GridStateSpace stateSpace;
+    private static GridCollectiveStateSpace mapStateSpace(TestCaseDTO testCaseDTO) {
+        GridCollectiveStateSpace stateSpace;
         if (testCaseDTO.getStateSpace() != null) {
-            stateSpace = new GridStateSpace(testCaseDTO.getStateSpace());
+            stateSpace = new GridCollectiveStateSpace(testCaseDTO.getStateSpace());
         } else {
             if (!isLightlyDefined(testCaseDTO)) {
                 throw new RuntimeException("Missing state space definition in " + testCaseDTO);
             }
             Integer rows = testCaseDTO.getStateSpaceRows();
             Integer cols = testCaseDTO.getStateSpaceCols();
-            stateSpace = new GridStateSpace(new int[rows][cols]);
+            stateSpace = new GridCollectiveStateSpace(new int[rows][cols]);
         }
         return stateSpace;
     }

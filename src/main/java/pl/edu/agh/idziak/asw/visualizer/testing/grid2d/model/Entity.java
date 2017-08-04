@@ -14,19 +14,16 @@ public class Entity {
         return id;
     }
 
+    public String getLetter() {
+        return Character.toString((char) (id.shortValue() + 64));
+    }
+
     @Override
     public String toString() {
         return "E" + id;
     }
 
-    @Override
-    public int hashCode() {
-        return id;
-    }
-
     public static Entity of(Integer id) {
         return new Entity(id);
     }
-
-
 }

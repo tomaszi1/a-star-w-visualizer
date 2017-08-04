@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import pl.edu.agh.idziak.asw.impl.grid2d.GridCollectiveState;
 import pl.edu.agh.idziak.asw.impl.grid2d.GridEntityState;
 import pl.edu.agh.idziak.asw.impl.grid2d.GridInputPlan;
-import pl.edu.agh.idziak.asw.impl.grid2d.GridStateSpace;
+import pl.edu.agh.idziak.asw.impl.grid2d.GridCollectiveStateSpace;
 import pl.edu.agh.idziak.asw.model.ASWOutputPlan;
 import pl.edu.agh.idziak.asw.visualizer.GlobalEventBus;
 
@@ -21,14 +21,14 @@ public class Simulation {
     private static final Logger LOG = LoggerFactory.getLogger(Simulation.class);
 
     private final GridInputPlan inputPlan;
-    private final ASWOutputPlan<GridStateSpace, GridCollectiveState> outputPlan;
+    private final ASWOutputPlan<GridCollectiveStateSpace, GridCollectiveState> outputPlan;
     private GridCollectiveState currentState;
     private GridCollectiveState nextPlannedState;
     private Map<Object, Deque<GridEntityState>> deviationsForNextStep = new HashMap<>();
     private Stack<GridCollectiveState> historicalStates = new Stack<>();
     private EventBus eventBus = GlobalEventBus.INSTANCE.get();
 
-    public Simulation(GridInputPlan inputPlan, ASWOutputPlan<GridStateSpace, GridCollectiveState> outputPlan) {
+    public Simulation(GridInputPlan inputPlan, ASWOutputPlan<GridCollectiveStateSpace, GridCollectiveState> outputPlan) {
         this.inputPlan = inputPlan;
         this.outputPlan = outputPlan;
         currentState = inputPlan.getInitialCollectiveState();
@@ -160,7 +160,7 @@ public class Simulation {
         return inputPlan;
     }
 
-    public ASWOutputPlan<GridStateSpace, GridCollectiveState> getOutputPlan() {
+    public ASWOutputPlan<GridCollectiveStateSpace, GridCollectiveState> getOutputPlan() {
         return outputPlan;
     }
 

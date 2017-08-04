@@ -47,7 +47,7 @@ public class ASWTestSuite {
         runAlgorithm(testCase, algorithmType);
     }
 
-    private ASWOutputPlan<GridStateSpace, GridCollectiveState> runAlgorithm(TestCase testCase, AlgorithmType algorithmType) {
+    private ASWOutputPlan<GridCollectiveStateSpace, GridCollectiveState> runAlgorithm(TestCase testCase, AlgorithmType algorithmType) {
         switch (algorithmType) {
             case ASW:
                 return aswPlanner.calculatePlan(testCase.getInputPlan());

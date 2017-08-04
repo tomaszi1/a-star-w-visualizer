@@ -100,9 +100,9 @@ public class EntityDrawingDelegate {
 
         if (entity instanceof Entity) {
             gc.setFill(Color.BLACK);
-            gc.setFont(Font.font(20));
+            gc.setFont(Font.font(DrawConstants.ENTITY_ID_FONT_SIZE));
             gc.fillText(
-                    ((Entity) entity).getId().toString(),
+                    ((Entity) entity).getLetter(),
                     leftX + getCellWidth() / 2,
                     topY + getCellWidth() / 2
             );

@@ -1,4 +1,4 @@
-package pl.edu.agh.idziak.asw.visualizer.gui.drawing.devzone;
+package pl.edu.agh.idziak.asw.visualizer.gui.drawing.subspace;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -6,7 +6,7 @@ import javafx.scene.paint.Color;
 /**
  * Created by Tomasz on 01.10.2016.
  */
-public abstract class DevZoneCellDrawer {
+public abstract class SubspaceCellDrawer {
     private int top;
     private int bottom;
     private int left;
@@ -49,6 +49,6 @@ public abstract class DevZoneCellDrawer {
     }
 
     public Color getColor() {
-        return color;
+        return color.deriveColor(1d, 1d, 1d, 0.7);
     }
 }
