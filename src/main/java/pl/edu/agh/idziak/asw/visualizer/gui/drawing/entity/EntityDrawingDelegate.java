@@ -11,6 +11,7 @@ import pl.edu.agh.idziak.asw.impl.grid2d.GridEntityState;
 import pl.edu.agh.idziak.asw.impl.grid2d.GridInputPlan;
 import pl.edu.agh.idziak.asw.visualizer.gui.drawing.DrawConstants;
 import pl.edu.agh.idziak.asw.visualizer.gui.drawing.GridParams;
+import pl.edu.agh.idziak.asw.visualizer.gui.root.GraphicsWrapper;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.model.Entity;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.model.TestCase;
 
@@ -34,8 +35,7 @@ public class EntityDrawingDelegate {
         newColorIterator();
     }
 
-    public void drawEntities(GraphicsContext gc, TestCase testCase) {
-        gc.save();
+    public void drawEntities(GraphicsWrapper gc, TestCase testCase) {
         newColorIterator();
         GridInputPlan inputPlan = testCase.getInputPlan();
 
@@ -49,17 +49,14 @@ public class EntityDrawingDelegate {
 
         for (Object entity : inputPlan.getEntities()) {
             Color color = colorIterator.next();
-            gc.setStroke(color);
-            gc.setFill(color);
 
             GridEntityState currentEntityState = inputPlan.getStateForEntity(currentState, entity);
             GridEntityState targetEntityState = inputPlan.getStateForEntity(targetState, entity);
 
-            drawInitialEntityState(entity, currentEntityState, gc);
-            drawTargetEntityState(targetEntityState, gc);
+            drawInitialEntityState(gc, currentEntityState, entity);
+            // drawTargetEntityState(targetEntityState, gc);
         }
 
-        gc.restore();
     }
 
     private void drawTargetEntityState(GridEntityState state, GraphicsContext gc) {
@@ -87,28 +84,36 @@ public class EntityDrawingDelegate {
         return gridParams.getTopPosForIndex(col);
     }
 
-    private void drawInitialEntityState(Object entity, GridEntityState state, GraphicsContext gc) {
-        gc.save();
-        int leftX = getCellWidth() * state.getCol();
-        int topY = getCellWidth() * state.getRow();
+    private void drawInitialEntityState(GraphicsWrapper gw, GridEntityState state, Object entity) {
 
-        double entityRectOffset = (getCellWidth() - getEntityWidth()) / 2;
-        gc.fillRect(leftX + entityRectOffset, topY + entityRectOffset, getEntityWidth(), getEntityWidth());
+        if (gw.isSwingGraphics()) {
 
-        gc.setTextAlign(TextAlignment.CENTER);
-        gc.setTextBaseline(VPos.CENTER);
+        } else {
+            GraphicsContext gc = gw.getJavafxGraphics();
+            gc.save();
+            // gc.setStroke(color);
+            // gc.setFill(color);
+            int leftX = getCellWidth() * state.getCol();
+            int topY = getCellWidth() * state.getRow();
 
-        if (entity instanceof Entity) {
-            gc.setFill(Color.BLACK);
-            gc.setFont(Font.font(DrawConstants.ENTITY_ID_FONT_SIZE));
-            gc.fillText(
-                    ((Entity) entity).getLetter(),
-                    leftX + getCellWidth() / 2,
-                    topY + getCellWidth() / 2
-            );
+            double entityRectOffset = (getCellWidth() - getEntityWidth()) / 2;
+            gc.fillRect(leftX + entityRectOffset, topY + entityRectOffset, getEntityWidth(), getEntityWidth());
+
+            gc.setTextAlign(TextAlignment.CENTER);
+            gc.setTextBaseline(VPos.CENTER);
+
+            if (entity instanceof Entity) {
+                gc.setFill(Color.BLACK);
+                gc.setFont(Font.font(DrawConstants.ENTITY_ID_FONT_SIZE));
+                gc.fillText(
+                        ((Entity) entity).getLetter(),
+                        leftX + getCellWidth() / 2,
+                        topY + getCellWidth() / 2
+                );
+            }
+
+            gc.restore();
         }
-
-        gc.restore();
     }
 
     private double getEntityWidth() {

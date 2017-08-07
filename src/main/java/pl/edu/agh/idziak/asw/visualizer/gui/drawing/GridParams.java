@@ -47,17 +47,14 @@ public class GridParams {
     }
 
     public double getPathPointCircleDiameter(int overlaps) {
-        if (overlaps <= 1) {
-            return getCellWidth() * 0.6;
-        }
         if (overlaps <= 2) {
             return getCellWidth() * 0.5;
         }
         if (overlaps <= 4) {
-            return getCellWidth() * 0.4;
+            return getCellWidth() * 0.45;
         }
         if (overlaps <= 9) {
-            return getCellWidth() * 0.3;
+            return getCellWidth() * 0.33;
         }
         throw new IllegalStateException();
     }

@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.edu.agh.idziak.asw.visualizer.gui.drawing.DrawConstants;
 
+import java.awt.*;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -17,15 +18,15 @@ import java.util.Map;
 public class SubspaceCellDrawingDelegate {
     private static final Logger LOG = LoggerFactory.getLogger(SubspaceCellDrawingDelegate.class);
 
-    private static final Iterable<SubspaceCellDrawer> DRAWERS = ImmutableList.of(
+    private static final Iterable<AbstractSubspaceCellDrawer> DRAWERS = ImmutableList.of(
             new SubspaceCellSlashStripeDrawer(),
             new SubspaceCellBackslashStripeDrawer(),
             new SubspaceCellVerticalStripeDrawer(),
             new SubspaceCellHorizontalStripeDrawer()
     );
 
-    private Iterator<SubspaceCellDrawer> drawerIterator;
-    private SubspaceCellDrawer currentDrawer;
+    private Iterator<AbstractSubspaceCellDrawer> drawerIterator;
+    private AbstractSubspaceCellDrawer currentDrawer;
 
     private Iterator<Map.Entry<String, Color>> colorIterator;
     private Color currentColor;
@@ -45,8 +46,15 @@ public class SubspaceCellDrawingDelegate {
         switchPattern();
     }
 
-    public void drawDeviationSubspace(GraphicsContext gc) {
-        SubspaceCellDrawer drawer = currentDrawer;
+    public void drawSubspaceCell(GraphicsContext gc) {
+        AbstractSubspaceCellDrawer drawer = currentDrawer;
+        drawer.setBounds(cellTop, cellLeft, cellBottom, cellRight);
+        drawer.setColor(currentColor);
+        drawer.drawCell(gc);
+    }
+
+    public void drawSubspaceCell(Graphics2D gc) {
+        AbstractSubspaceCellDrawer drawer = currentDrawer;
         drawer.setBounds(cellTop, cellLeft, cellBottom, cellRight);
         drawer.setColor(currentColor);
         drawer.drawCell(gc);

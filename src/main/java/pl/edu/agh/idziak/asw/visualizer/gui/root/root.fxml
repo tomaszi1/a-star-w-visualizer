@@ -3,6 +3,7 @@
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.embed.swing.SwingNode?>
 <BorderPane fx:id="rootBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
             xmlns="http://javafx.com/javafx/8.0.91" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="pl.edu.agh.idziak.asw.visualizer.gui.root.RootPresenter">
@@ -18,8 +19,9 @@
                 </center>
             </BorderPane>
             <StackPane prefHeight="500" prefWidth="500">
-                <ScrollPane prefWidth="500" prefHeight="500">
-                    <Canvas fx:id="canvas" height="100" width="100"/>
+                <ScrollPane prefWidth="500" prefHeight="500" fitToHeight="true" fitToWidth="true">
+                    <!--<Canvas fx:id="canvas" height="100" width="100"/>-->
+                    <SwingNode fx:id="swingCanvasWrapper"/>
                 </ScrollPane>
             </StackPane>
             <fx:include source="../editpanel/editPanel.fxml"/>

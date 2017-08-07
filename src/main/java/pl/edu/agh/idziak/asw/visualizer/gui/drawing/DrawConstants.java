@@ -13,10 +13,10 @@ import java.util.Map;
 public class DrawConstants {
     public static final Collection<Color> COLORS = ImmutableSet.of(
             Color.DODGERBLUE,
-            Color.GREEN,
+            Color.LIGHTGREEN,
             Color.SALMON,
             Color.BROWN,
-            Color.YELLOWGREEN,
+            Color.YELLOW,
             Color.VIOLET,
             Color.PURPLE
     );
@@ -26,7 +26,7 @@ public class DrawConstants {
             "blue", Color.BLUE,
             "orange", Color.ORANGE,
             "red", Color.RED,
-            "gold", Color.GOLD
+            "violet", Color.VIOLET
     );
 
     public static final double SUBSPACE_LINES_WIDTH = 1d;

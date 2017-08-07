@@ -2,11 +2,14 @@ package pl.edu.agh.idziak.asw.visualizer.gui.drawing.subspace;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import pl.edu.agh.idziak.asw.visualizer.gui.drawing.DrawingUtils;
+
+import java.awt.*;
 
 /**
  * Created by Tomasz on 01.10.2016.
  */
-public abstract class SubspaceCellDrawer {
+public abstract class AbstractSubspaceCellDrawer {
     private int top;
     private int bottom;
     private int left;
@@ -49,6 +52,17 @@ public abstract class SubspaceCellDrawer {
     }
 
     public Color getColor() {
-        return color.deriveColor(1d, 1d, 1d, 0.7);
+        return color.deriveColor(1d, 1d, 1d, 1d);
     }
+
+    public java.awt.Color getAwtColor() {
+        return DrawingUtils.toAwtColor(getColor());
+    }
+
+    public void drawCell(Graphics2D gc) {
+        gc.setClip(getLeft(), getTop(), getRight() - getLeft(), getBottom() - getTop());
+        safelyDrawCell(gc);
+    }
+
+    protected abstract void safelyDrawCell(Graphics2D gc);
 }

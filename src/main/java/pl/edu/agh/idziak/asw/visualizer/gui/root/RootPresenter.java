@@ -1,6 +1,7 @@
 package pl.edu.agh.idziak.asw.visualizer.gui.root;
 
 import javafx.beans.binding.Bindings;
+import javafx.embed.swing.SwingNode;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
@@ -20,6 +21,7 @@ import pl.edu.agh.idziak.asw.visualizer.testing.TestController;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.model.TestCase;
 
 import javax.inject.Inject;
+import javax.swing.*;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -32,20 +34,36 @@ public class RootPresenter implements Initializable {
     private static final Logger LOG = LoggerFactory.getLogger(RootPresenter.class);
     private static final String ENV_VAR_PRELOAD_TEST = "preload.test";
 
-    @FXML private Label testFileLabel;
-    @FXML private BorderPane rootBorderPane;
-    @FXML private Canvas canvas;
-    @FXML private Button buttonReloadTests;
-    @FXML private Button buttonOpenTests;
-    @FXML private Button buttonExecuteTestASW;
-    @FXML private Button buttonExecuteTestAStar;
-    @FXML private Button buttonExecuteTestWavefront;
-    @FXML private Button buttonScaleUp;
-    @FXML private Button buttonScaleDown;
-    @FXML private Button buttonQuickSaveCanvas;
-    @FXML private Button buttonStartBenchmark;
-    @FXML private ListView<TestCase> testCaseListView;
-    @FXML private Window window;
+    @FXML
+    private SwingNode swingCanvasWrapper;
+    @FXML
+    private Canvas canvas;
+    @FXML
+    private Label testFileLabel;
+    @FXML
+    private BorderPane rootBorderPane;
+    @FXML
+    private Button buttonReloadTests;
+    @FXML
+    private Button buttonOpenTests;
+    @FXML
+    private Button buttonExecuteTestASW;
+    @FXML
+    private Button buttonExecuteTestAStar;
+    @FXML
+    private Button buttonExecuteTestWavefront;
+    @FXML
+    private Button buttonScaleUp;
+    @FXML
+    private Button buttonScaleDown;
+    @FXML
+    private Button buttonQuickSaveCanvas;
+    @FXML
+    private Button buttonStartBenchmark;
+    @FXML
+    private ListView<TestCase> testCaseListView;
+    @FXML
+    private Window window;
 
     @Inject
     private TestController testController;
@@ -60,10 +78,10 @@ public class RootPresenter implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        CanvasMouseEventsDispatcher canvasMouseEventsDispatcher = new CanvasMouseEventsDispatcher();
-        gridCanvasController = new GridCanvasController(canvas,
-                testController.activeTestCaseProperty(),
-                canvasMouseEventsDispatcher);
+        gridCanvasController = new GridCanvasController(canvas, testController.activeTestCaseProperty());
+        SwingUtilities.invokeLater(() -> {
+            swingCanvasWrapper.setContent(gridCanvasController.getSvgCanvas());
+        });
         initializeTestCaseList();
         initializeButtons();
         preloadTest();
@@ -85,8 +103,13 @@ public class RootPresenter implements Initializable {
         buttonScaleDown.setOnAction(event -> gridCanvasController.scaleDown());
         buttonScaleUp.setOnAction(event -> gridCanvasController.scaleUp());
         buttonQuickSaveCanvas.setOnAction(event -> {
-            WritableImage writableImage = gridCanvasController.snapshotCanvas();
-            imageWriter.writeImageToDefaultLocation(writableImage);
+            if (gridCanvasController.isSvgMode()) {
+                byte[] svgBytes = gridCanvasController.snapshotCanvasSvg();
+                imageWriter.writeSvgToDefaultLocation(svgBytes);
+            } else {
+                WritableImage writableImage = gridCanvasController.snapshotCanvas();
+                imageWriter.writeImageToDefaultLocation(writableImage);
+            }
         });
         buttonStartBenchmark.setOnAction(event -> testController.executeBenchmark());
     }

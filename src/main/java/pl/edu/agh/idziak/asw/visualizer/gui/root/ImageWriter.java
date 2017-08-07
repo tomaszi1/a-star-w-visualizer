@@ -24,8 +24,11 @@ public class ImageWriter {
     public static final Path DEFAULT_SNAPSHOT_DIR_PATH = Paths.get("SNAPSHOTS");
 
     public static final String DEFAULT_FILENAME_BASE = "SNAPSHOT";
-    public static final Pattern DEFAULT_FILENAME_PATTERN =
+    public static final Pattern DEFAULT_FILENAME_PNG_PATTERN =
             Pattern.compile("^" + DEFAULT_FILENAME_BASE + "([\\d]{3})\\.png$");
+    public static final Pattern DEFAULT_FILENAME_SVG_PATTERN =
+            Pattern.compile("^" + DEFAULT_FILENAME_BASE + "([\\d]{3})\\.svg$");
+
 
     public void writeImageToDefaultLocation(WritableImage writableImage) {
         RenderedImage renderedImage = SwingFXUtils.fromFXImage(writableImage, null);
@@ -35,7 +38,7 @@ public class ImageWriter {
         }
 
         try {
-            int newFileOrdinal = getNewFileOrdinal();
+            int newFileOrdinal = getNewFileOrdinal(false);
             Path newFilePath = Paths.get(DEFAULT_SNAPSHOT_DIR_PATH.toString(),
                     format("%s%03d.png", DEFAULT_FILENAME_BASE, newFileOrdinal));
             ImageIO.write(renderedImage, "png", newFilePath.toFile());
@@ -44,16 +47,18 @@ public class ImageWriter {
         }
     }
 
-    private static int getNewFileOrdinal() throws IOException {
+    private static int getNewFileOrdinal(boolean isSvg) throws IOException {
         return Files.list(DEFAULT_SNAPSHOT_DIR_PATH)
-                    .map(path -> path.getFileName().toString())
-                    .map(DEFAULT_FILENAME_PATTERN::matcher)
-                    .filter(Matcher::matches)
-                    .map(matcher -> matcher.group(1))
-                    .map(Integer::parseInt)
-                    .max(naturalOrder())
-                    .map(maxExistingOrdinal -> maxExistingOrdinal + 1)
-                    .orElse(0);
+                .map(path -> path.getFileName().toString())
+                .map(input -> isSvg ?
+                        DEFAULT_FILENAME_SVG_PATTERN.matcher(input)
+                        : DEFAULT_FILENAME_PNG_PATTERN.matcher(input))
+                .filter(Matcher::matches)
+                .map(matcher -> matcher.group(1))
+                .map(Integer::parseInt)
+                .max(naturalOrder())
+                .map(maxExistingOrdinal -> maxExistingOrdinal + 1)
+                .orElse(0);
     }
 
     private static void createDirectory() {
@@ -73,4 +78,18 @@ public class ImageWriter {
         }
     }
 
+    public void writeSvgToDefaultLocation(byte[] svgBytes) {
+        if (!Files.isDirectory(DEFAULT_SNAPSHOT_DIR_PATH)) {
+            createDirectory();
+        }
+
+        try {
+            int newFileOrdinal = getNewFileOrdinal(true);
+            Path newFilePath = Paths.get(DEFAULT_SNAPSHOT_DIR_PATH.toString(),
+                    format("%s%03d.svg", DEFAULT_FILENAME_BASE, newFileOrdinal));
+            Files.write(newFilePath, svgBytes);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
