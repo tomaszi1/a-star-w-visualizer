@@ -115,6 +115,7 @@
     ]
   },
   {
+    "id": 10,
     "name": "confined swap - 2 entities - 2x7",
     "stateSpace": [
       [0, 0, 0, 0, 0, 0, 0],
@@ -126,6 +127,7 @@
     ]
   },
   {
+    "id": 11,
     "name": "close swap - 2 entities - 2x7",
     "stateSpace": [
       [0, 0, 0, 0, 0, 0, 0],
@@ -137,6 +139,7 @@
     ]
   },
   {
+    "id": 9232,
     "name": "distance 1 pass-by - 2 entities - 6x7",
     "stateSpaceRows": 6,
     "stateSpaceCols": 9,
@@ -146,7 +149,8 @@
     ]
   },
   {
-    "name": "distance 2 pass-by - 2 entities - 7x7",
+    "id": 4345,
+    "name": "distance 2 pass-by - 2 entities - 7x9",
     "stateSpaceRows": 7,
     "stateSpaceCols": 9,
     "entities": [
@@ -155,6 +159,7 @@
     ]
   },
   {
+    "id": 942525,
     "name": "distance 1 pass-by - 3 entities - 7x7",
     "stateSpaceRows": 7,
     "stateSpaceCols": 9,
@@ -165,6 +170,7 @@
     ]
   },
   {
+    "id": 13669,
     "name": "move in line - 2 entities - 6x9",
     "stateSpaceRows": 6,
     "stateSpaceCols": 9,
@@ -174,6 +180,7 @@
     ]
   },
   {
+    "id": 931661,
     "name": "move in line - 3 entities - 7x9",
     "stateSpaceRows": 7,
     "stateSpaceCols": 9,
@@ -184,6 +191,7 @@
     ]
   },
   {
+    "id": 315139,
     "name": "cross in the middle - 2 entities - 7x9",
     "stateSpaceRows": 9,
     "stateSpaceCols": 9,
@@ -193,6 +201,7 @@
     ]
   },
   {
+    "id": 93251,
     "name": "swap (with overstepping) - 2 entities - 7x3",
     "stateSpace": [
       [0, 1, 0],
@@ -209,6 +218,7 @@
     ]
   },
   {
+    "id": 224259,
     "name": "swap (with overstepping) - 3 entities - 7x3",
     "stateSpace": [
       [0, 1, 0],
@@ -226,6 +236,7 @@
     ]
   },
   {
+    "id": 135159,
     "name": "swap (with overstepping) - 3 entities - 7x3",
     "stateSpace": [
       [0, 1, 0],

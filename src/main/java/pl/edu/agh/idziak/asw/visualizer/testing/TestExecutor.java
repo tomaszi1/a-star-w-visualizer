@@ -50,9 +50,12 @@ public class TestExecutor {
 
     private static class AStarMonitor implements AStarStateMonitor<GridCollectiveState> {
 
-
         @Override
         public void onIteration(AStarIterationData<GridCollectiveState> aStarIterationData) {
+            // String state = Utils.printReadableState(aStarIterationData.getCurrentState().getKey(), ((GridInputPlan) aStarIterationData.getInputPlan()));
+            // System.out.println(state);
+            // System.out.println(aStarIterationData.getCurrentState().getPrimaryValue());
+            // System.out.println(aStarIterationData.getCurrentState().getSecondaryValue());
             if (aStarIterationData.getClosedSetSize() % 10 == 0) {
                 LOG.info("openSet={}, closedSet={}", aStarIterationData.getOpenSetSize(), aStarIterationData.getClosedSetSize());
             }

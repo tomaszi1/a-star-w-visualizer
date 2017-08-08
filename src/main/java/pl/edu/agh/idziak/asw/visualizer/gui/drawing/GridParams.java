@@ -56,6 +56,9 @@ public class GridParams {
         if (overlaps <= 9) {
             return getCellWidth() * 0.33;
         }
+        if (overlaps <= 12) {
+            return getCellWidth() * 0.25;
+        }
         throw new IllegalStateException();
     }
 }

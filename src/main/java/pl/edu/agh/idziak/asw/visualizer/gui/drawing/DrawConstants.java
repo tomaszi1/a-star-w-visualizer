@@ -58,6 +58,9 @@ public class DrawConstants {
         if (overlaps <= 9) {
             return new PathPointPositionIndex(index / 3, index % 3, 3, 3);
         }
+        if(overlaps <= 12){
+            return new PathPointPositionIndex(index / 3, index % 3, 4, 3);
+        }
         throw new IllegalStateException();
     }
 
