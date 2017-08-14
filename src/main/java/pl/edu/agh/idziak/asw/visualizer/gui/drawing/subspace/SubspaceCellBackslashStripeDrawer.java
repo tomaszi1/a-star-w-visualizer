@@ -11,7 +11,7 @@ import java.awt.geom.Line2D;
  */
 public class SubspaceCellBackslashStripeDrawer extends AbstractSubspaceCellDrawer {
 
-    private static final int LINES_IN_BETWEEN = 6;
+    private static final int LINES_IN_BETWEEN = 4;
 
     @Override
     protected void safelyDrawCell(GraphicsContext gc) {

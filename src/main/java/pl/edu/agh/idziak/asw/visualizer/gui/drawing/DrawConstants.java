@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import javafx.scene.paint.Color;
 
+import java.awt.*;
 import java.util.Collection;
 import java.util.Map;
 
@@ -18,7 +19,7 @@ public class DrawConstants {
             Color.BROWN,
             Color.YELLOW,
             Color.VIOLET,
-            Color.PURPLE
+            Color.ORANGE
     );
 
     public static final Map<String, Color> SUBSPACE_STRIPE_COLORS = ImmutableMap.of(
@@ -39,6 +40,7 @@ public class DrawConstants {
     public static final int ENTITY_STOP_DOT_SIZE = 15;
     public static final double PATH_POINT_CIRCLE_EDGE_WIDTH = 1.0;
     public static final double PATH_POINT_OFFSET_FACTOR = 0.05;
+    public static final Font DEFAULT_FONT = new Font("Arial", Font.PLAIN, 28);
 
     public static PathPointPositionIndex getPositionIndexForPathPoint(int index, int overlaps) {
         if (overlaps <= 1) {

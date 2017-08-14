@@ -5,6 +5,7 @@ package pl.edu.agh.idziak.asw.visualizer.gui.drawing;
  */
 public class GridParams {
 
+    private static final int LABEL_SPACE_OFFSET = 30;
     private double scaleFactor = 1;
 
     public void scaleUp() {
@@ -19,7 +20,7 @@ public class GridParams {
     }
 
     public int getTopPosForIndex(int index) {
-        return index * getCellWidth();
+        return index * getCellWidth() + ((int) (LABEL_SPACE_OFFSET * scaleFactor));
     }
 
     public int getCellWidth() {
@@ -60,5 +61,10 @@ public class GridParams {
             return getCellWidth() * 0.25;
         }
         throw new IllegalStateException();
+    }
+
+
+    public int getLabelCenterOffset() {
+        return LABEL_SPACE_OFFSET / 2;
     }
 }

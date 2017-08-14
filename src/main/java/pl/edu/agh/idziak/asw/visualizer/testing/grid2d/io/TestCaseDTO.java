@@ -14,6 +14,7 @@ import java.util.List;
 public class TestCaseDTO {
     private Integer id;
     private String name;
+    private Integer neighborhood;
     private int[][] stateSpace;
     private Integer stateSpaceRows;
     private Integer stateSpaceCols;
@@ -28,6 +29,10 @@ public class TestCaseDTO {
         stateSpaceCols = builder.stateSpaceCols;
         entities = builder.entities;
         name = builder.name;
+    }
+
+    public Integer getNeighborhood() {
+        return neighborhood;
     }
 
     public Integer getId() {

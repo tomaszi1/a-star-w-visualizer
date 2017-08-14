@@ -26,7 +26,6 @@ import java.util.Set;
 
 public class PathDrawingDelegateImpl implements PathDrawingDelegate {
     private static final Logger LOG = LoggerFactory.getLogger(PathDrawingDelegateImpl.class);
-    private static final Font DEFAULT_FONT = new Font("Arial", Font.PLAIN, 28);
     private GridParams gridParams;
     private Iterator<Color> pathPointColorIterator;
     private Color currentColor;
@@ -102,8 +101,8 @@ public class PathDrawingDelegateImpl implements PathDrawingDelegate {
         Graphics2D g = gc.getSwingGraphics();
         String text = letter + step;
         g.setClip(new Ellipse2D.Double(pathPointCircleCenterX - pathPointCircleDiameter / 2, pathPointCircleCenterY - pathPointCircleDiameter / 2, pathPointCircleDiameter, pathPointCircleDiameter));
-        int maxFittingFontSize = DrawingUtils.getMaxFittingFontSize(g, DEFAULT_FONT, text, (int) (pathPointCircleDiameter * 0.9), (int) pathPointCircleDiameter);
-        g.setFont(DEFAULT_FONT.deriveFont((float) maxFittingFontSize));
+        int maxFittingFontSize = DrawingUtils.getMaxFittingFontSize(g, DrawConstants.DEFAULT_FONT, text, (int) (pathPointCircleDiameter * 0.9), (int) pathPointCircleDiameter);
+        g.setFont(DrawConstants.DEFAULT_FONT.deriveFont((float) maxFittingFontSize));
         FontMetrics metrics = g.getFontMetrics(g.getFont());
         float x = (float) (pathPointCircleCenterX - metrics.stringWidth(text) / 2);
         float y = (float) (pathPointCircleCenterY - metrics.getHeight() / 2 + metrics.getAscent());

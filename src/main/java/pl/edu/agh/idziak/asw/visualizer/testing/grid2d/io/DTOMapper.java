@@ -43,7 +43,13 @@ public class DTOMapper {
         GridCollectiveState initialState = new GridCollectiveState(initialEntityStates);
         GridCollectiveState targetState = new GridCollectiveState(targetEntityStates);
 
-        GridInputPlan gridInputPlan = new GridInputPlan(entities, stateSpace, initialState, targetState, NeighborhoodType.VON_NEUMANN);
+        NeighborhoodType neighborhood;
+        if (testCaseDTO.getNeighborhood() == null) {
+            neighborhood = NeighborhoodType.VON_NEUMANN;
+        } else {
+            neighborhood = testCaseDTO.getNeighborhood().equals(0) ? NeighborhoodType.VON_NEUMANN : NeighborhoodType.MOORE;
+        }
+        GridInputPlan gridInputPlan = new GridInputPlan(entities, stateSpace, initialState, targetState, neighborhood);
 
         return new TestCase(testCaseDTO.getName(), gridInputPlan, testCaseDTO.getId());
     }

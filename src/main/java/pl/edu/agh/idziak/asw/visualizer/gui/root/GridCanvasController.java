@@ -1,19 +1,18 @@
 package pl.edu.agh.idziak.asw.visualizer.gui.root;
 
 import com.google.common.eventbus.Subscribe;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.WritableImage;
 import org.apache.batik.anim.dom.SVGDOMImplementation;
+import org.apache.batik.svggen.SVGGeneratorContext;
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.batik.swing.JSVGCanvas;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.svg.SVGDocument;
-import pl.edu.agh.idziak.asw.impl.ExtendedOutputPlan;
 import pl.edu.agh.idziak.asw.impl.grid2d.GridCollectiveState;
 import pl.edu.agh.idziak.asw.impl.grid2d.GridCollectiveStateSpace;
 import pl.edu.agh.idziak.asw.impl.grid2d.GridDeviationSubspace;
@@ -53,9 +52,6 @@ public class GridCanvasController {
     private TestCase currentTestCase;
 
     private GridParams gridParams = new GridParams();
-
-    private final ChangeListener<ExtendedOutputPlan<GridCollectiveStateSpace, GridCollectiveState>> outputPlanChangeListener
-            = (obs, oldVal, newVal) -> repaint();
 
     private PathDrawingDelegate pathDrawingDelegate;
     private EntityDrawingDelegate entityDrawingDelegate;
@@ -138,10 +134,10 @@ public class GridCanvasController {
 
     private void drawSwingCanvas() {
         SVGDocument svgDoc = (SVGDocument) SVGDOMImplementation.getDOMImplementation().createDocument(SVGDOMImplementation.SVG_NAMESPACE_URI, "svg", null);
-        SVGGraphics2D g = new SVGGraphics2D(svgDoc);
+        SVGGraphics2D g = new SVGGraphics2D(SVGGeneratorContext.createDefault(svgDoc), true);
         int cols = currentTestCase.getInputPlan().getStateSpace().getCols();
         int rows = currentTestCase.getInputPlan().getStateSpace().getRows();
-        g.setSVGCanvasSize(new Dimension(cols * gridParams.getCellWidth() + 1, rows * gridParams.getCellWidth() + 1));
+        g.setSVGCanvasSize(new Dimension(gridParams.getTopPosForIndex(cols) + 1, gridParams.getTopPosForIndex(rows) + 1));
 
         drawStateSpace(g, currentTestCase.getInputPlan().getStateSpace());
         drawDeviationSubspaces(g);
@@ -217,8 +213,8 @@ public class GridCanvasController {
         int rows = stateSpace.getRows();
         int cols = stateSpace.getCols();
 
-        canvas.setWidth(getCellWidth() * cols);
-        canvas.setHeight(getCellWidth() * rows);
+        canvas.setWidth(gridParams.getTopPosForIndex(cols + 1));
+        canvas.setHeight(gridParams.getTopPosForIndex(rows + 1));
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
     }
 

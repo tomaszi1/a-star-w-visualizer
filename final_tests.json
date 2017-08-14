@@ -1,6 +1,47 @@
 [
   {
     "id": 1,
+    "name": "distance 2 pass-by - 2 entities - 5x9 - VON NEUMANN",
+    "stateSpaceRows": 5,
+    "stateSpaceCols": 9,
+    "entities": [
+      { "id": 1, "row": 1, "col": 1, "targetRow": 1, "targetCol": 7 },
+      { "id": 2, "row": 3, "col": 7, "targetRow": 3, "targetCol": 1 }
+    ]
+  },
+  {
+    "id": 11,
+    "name": "distance 2 pass-by - 2 entities - 5x9 - MOORE",
+    "stateSpaceRows": 5,
+    "stateSpaceCols": 9,
+    "entities": [
+      { "id": 1, "row": 1, "col": 1, "targetRow": 1, "targetCol": 7 },
+      { "id": 2, "row": 3, "col": 7, "targetRow": 3, "targetCol": 1 }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "7x7 - 2 entities",
+    "stateSpaceRows": 7,
+    "stateSpaceCols": 7,
+    "entities": [
+      { "id": 1, "row": 0, "col": 0, "targetRow": 6, "targetCol": 6 },
+      { "id": 2, "row": 6, "col": 6, "targetRow": 0, "targetCol": 0 }
+    ]
+  },
+  {
+    "id": 3,
+    "name": "7x7 - 3 entities",
+    "stateSpaceRows": 7,
+    "stateSpaceCols": 7,
+    "entities": [
+      { "id": 1, "row": 0, "col": 0, "targetRow": 6, "targetCol": 6 },
+      { "id": 2, "row": 6, "col": 6, "targetRow": 0, "targetCol": 0 },
+      { "id": 3, "row": 0, "col": 6, "targetRow": 6, "targetCol": 0 }
+    ]
+  },
+  {
+    "id": 4,
     "name": "7x7 - 4 entities",
     "stateSpaceRows": 7,
     "stateSpaceCols": 7,
@@ -12,13 +53,147 @@
     ]
   },
   {
-    "id": 2,
-    "name": "distance 2 pass-by - 2 entities - 7x7",
+    "id": 5,
+    "name": "7x7 - 5 entities",
     "stateSpaceRows": 7,
-    "stateSpaceCols": 9,
+    "stateSpaceCols": 7,
     "entities": [
-      { "id": 1, "row": 2, "col": 1, "targetRow": 2, "targetCol": 7 },
-      { "id": 2, "row": 4, "col": 7, "targetRow": 4, "targetCol": 1 }
+      { "id": 1, "row": 0, "col": 0, "targetRow": 6, "targetCol": 6 },
+      { "id": 2, "row": 6, "col": 6, "targetRow": 0, "targetCol": 0 },
+      { "id": 3, "row": 0, "col": 6, "targetRow": 6, "targetCol": 0 },
+      { "id": 4, "row": 6, "col": 0, "targetRow": 0, "targetCol": 6 },
+      { "id": 5, "row": 3, "col": 0, "targetRow": 3, "targetCol": 6 }
+    ]
+  },
+  {
+    "id": 6,
+    "name": "7x7 - 6 entities",
+    "stateSpaceRows": 7,
+    "stateSpaceCols": 7,
+    "entities": [
+      { "id": 1, "row": 0, "col": 0, "targetRow": 6, "targetCol": 6 },
+      { "id": 2, "row": 6, "col": 6, "targetRow": 0, "targetCol": 0 },
+      { "id": 3, "row": 0, "col": 6, "targetRow": 6, "targetCol": 0 },
+      { "id": 4, "row": 6, "col": 0, "targetRow": 0, "targetCol": 6 },
+      { "id": 5, "row": 3, "col": 0, "targetRow": 3, "targetCol": 6 },
+      { "id": 6, "row": 3, "col": 6, "targetRow": 3, "targetCol": 0 }
+    ]
+  },
+  {
+    "id": 7,
+    "name": "7x7 - 7 entities",
+    "stateSpaceRows": 7,
+    "stateSpaceCols": 7,
+    "entities": [
+      { "id": 1, "row": 0, "col": 0, "targetRow": 6, "targetCol": 6 },
+      { "id": 2, "row": 6, "col": 6, "targetRow": 0, "targetCol": 0 },
+      { "id": 3, "row": 0, "col": 6, "targetRow": 6, "targetCol": 0 },
+      { "id": 4, "row": 6, "col": 0, "targetRow": 0, "targetCol": 6 },
+      { "id": 5, "row": 3, "col": 0, "targetRow": 3, "targetCol": 6 },
+      { "id": 6, "row": 3, "col": 6, "targetRow": 3, "targetCol": 0 },
+      { "id": 7, "row": 0, "col": 3, "targetRow": 6, "targetCol": 3 }
+    ]
+  },
+  {
+    "id": 22,
+    "neighborhood": 1,
+    "name": "7x7 - 2 entities - MOORE",
+    "stateSpaceRows": 7,
+    "stateSpaceCols": 7,
+    "entities": [
+      { "id": 1, "row": 0, "col": 0, "targetRow": 6, "targetCol": 6 },
+      { "id": 2, "row": 6, "col": 6, "targetRow": 0, "targetCol": 0 }
+    ]
+  },
+  {
+    "id": 33,
+    "neighborhood": 1,
+    "name": "7x7 - 3 entities - MOORE",
+    "stateSpaceRows": 7,
+    "stateSpaceCols": 7,
+    "entities": [
+      { "id": 1, "row": 0, "col": 0, "targetRow": 6, "targetCol": 6 },
+      { "id": 2, "row": 6, "col": 6, "targetRow": 0, "targetCol": 0 },
+      { "id": 3, "row": 0, "col": 6, "targetRow": 6, "targetCol": 0 }
+    ]
+  },
+  {
+    "id": 44,
+    "neighborhood": 1,
+    "name": "7x7 - 4 entities - MOORE",
+    "stateSpaceRows": 7,
+    "stateSpaceCols": 7,
+    "entities": [
+      { "id": 1, "row": 0, "col": 0, "targetRow": 6, "targetCol": 6 },
+      { "id": 2, "row": 6, "col": 6, "targetRow": 0, "targetCol": 0 },
+      { "id": 3, "row": 0, "col": 6, "targetRow": 6, "targetCol": 0 },
+      { "id": 4, "row": 6, "col": 0, "targetRow": 0, "targetCol": 6 }
+    ]
+  },
+  {
+    "id": 55,
+    "neighborhood": 1,
+    "name": "7x7 - 5 entities - MOORE",
+    "stateSpaceRows": 7,
+    "stateSpaceCols": 7,
+    "entities": [
+      { "id": 1, "row": 0, "col": 0, "targetRow": 6, "targetCol": 6 },
+      { "id": 2, "row": 6, "col": 6, "targetRow": 0, "targetCol": 0 },
+      { "id": 3, "row": 0, "col": 6, "targetRow": 6, "targetCol": 0 },
+      { "id": 4, "row": 6, "col": 0, "targetRow": 0, "targetCol": 6 },
+      { "id": 5, "row": 3, "col": 0, "targetRow": 3, "targetCol": 6 }
+    ]
+  },
+  {
+    "id": 66,
+    "neighborhood": 1,
+    "name": "7x7 - 6 entities - MOORE",
+    "stateSpaceRows": 7,
+    "stateSpaceCols": 7,
+    "entities": [
+      { "id": 1, "row": 0, "col": 0, "targetRow": 6, "targetCol": 6 },
+      { "id": 2, "row": 6, "col": 6, "targetRow": 0, "targetCol": 0 },
+      { "id": 3, "row": 0, "col": 6, "targetRow": 6, "targetCol": 0 },
+      { "id": 4, "row": 6, "col": 0, "targetRow": 0, "targetCol": 6 },
+      { "id": 5, "row": 3, "col": 0, "targetRow": 3, "targetCol": 6 },
+      { "id": 6, "row": 3, "col": 6, "targetRow": 3, "targetCol": 0 }
+    ]
+  },
+  {
+    "id": 77,
+    "neighborhood": 1,
+    "name": "7x7 - 7 entities - MOORE",
+    "stateSpaceRows": 7,
+    "stateSpaceCols": 7,
+    "entities": [
+      { "id": 1, "row": 0, "col": 0, "targetRow": 6, "targetCol": 6 },
+      { "id": 2, "row": 6, "col": 6, "targetRow": 0, "targetCol": 0 },
+      { "id": 3, "row": 0, "col": 6, "targetRow": 6, "targetCol": 0 },
+      { "id": 4, "row": 6, "col": 0, "targetRow": 0, "targetCol": 6 },
+      { "id": 5, "row": 3, "col": 0, "targetRow": 3, "targetCol": 6 },
+      { "id": 6, "row": 3, "col": 6, "targetRow": 3, "targetCol": 0 },
+      { "id": 7, "row": 0, "col": 3, "targetRow": 6, "targetCol": 3 }
+    ]
+  },
+  {
+    "id": 8,
+    "name": "walkalong - 2 entities",
+    "stateSpaceRows": 5,
+    "stateSpaceCols": 7,
+    "entities": [
+      { "id": 1, "row": 1, "col": 0, "targetRow": 1, "targetCol": 6 },
+      { "id": 2, "row": 3, "col": 0, "targetRow": 3, "targetCol": 6 }
+    ]
+  },
+  {
+    "id": 9,
+    "name": "walkalong - 3 entities",
+    "stateSpaceRows": 7,
+    "stateSpaceCols": 7,
+    "entities": [
+      { "id": 1, "row": 1, "col": 0, "targetRow": 1, "targetCol": 6 },
+      { "id": 2, "row": 3, "col": 0, "targetRow": 3, "targetCol": 6 },
+      { "id": 2, "row": 5, "col": 0, "targetRow": 5, "targetCol": 6 }
     ]
   }
 ]

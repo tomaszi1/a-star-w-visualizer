@@ -11,7 +11,7 @@ import pl.edu.agh.idziak.asw.astar.AStarStateMonitor;
 import pl.edu.agh.idziak.asw.common.Statistics;
 import pl.edu.agh.idziak.asw.impl.AlgorithmType;
 import pl.edu.agh.idziak.asw.impl.grid2d.*;
-import pl.edu.agh.idziak.asw.model.ASWOutputPlan;
+import pl.edu.agh.idziak.asw.visualizer.testing.benchmark.PlanSummaryGenerator;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.model.TestCase;
 
 import java.util.concurrent.ExecutorService;
@@ -29,7 +29,7 @@ public class TestExecutor {
     private final ExecutionObserver executionObserver;
 
     private final GridASWPlanner gridASWPlanner;
-    private final GridAStarOnlyPlanner gridAStarOnlyPlanner;
+    private final GridAStarPlanner gridAStarPlanner;
     private final GridWavefrontOnlyPlanner gridWavefrontOnlyPlanner;
 
     public TestExecutor(ObservableObjectValue<TestCase> activeTestCase, ExecutionObserver executionObserver) {
@@ -38,8 +38,8 @@ public class TestExecutor {
         statistics = new SimpleObjectProperty<>();
         gridASWPlanner = new GridASWPlanner();
         gridASWPlanner.setAStarCurrentStateMonitor(new AStarMonitor());
-        gridAStarOnlyPlanner = new GridAStarOnlyPlanner();
-        gridAStarOnlyPlanner.setAStarCurrentStateMonitor(new AStarMonitor());
+        gridAStarPlanner = new GridAStarPlanner();
+        gridAStarPlanner.setAStarCurrentStateMonitor(new AStarMonitor());
         gridWavefrontOnlyPlanner = new GridWavefrontOnlyPlanner();
         executorService = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder()
                 .setDaemon(true)
@@ -48,7 +48,7 @@ public class TestExecutor {
     }
 
 
-    private static class AStarMonitor implements AStarStateMonitor<GridCollectiveState> {
+    private static class AStarMonitor extends AStarStateMonitor<GridCollectiveState> {
 
         @Override
         public void onIteration(AStarIterationData<GridCollectiveState> aStarIterationData) {
@@ -62,7 +62,7 @@ public class TestExecutor {
         }
 
         @Override
-        public void onSuccess(int closedSetSize, int openSetSize) {
+        public void onFinish(int closedSetSize, int openSetSize) {
             LOG.info("A* statistics: closedSetSize={}, openSetSize={}", closedSetSize, openSetSize);
         }
     }
@@ -75,16 +75,16 @@ public class TestExecutor {
         executorService.submit(testExecutionTask);
     }
 
-    private ASWOutputPlan<GridCollectiveStateSpace, GridCollectiveState> executeTestWithGivenStrategy(GridInputPlan inputPlan, AlgorithmType algorithmType) {
+    private GridASWOutputPlan executeTestWithGivenStrategy(GridInputPlan inputPlan, AlgorithmType algorithmType) {
         switch (algorithmType) {
             case ASW:
                 return gridASWPlanner.calculatePlan(inputPlan);
             case ASTAR_ONLY:
-                return gridAStarOnlyPlanner.calculatePlan(inputPlan);
+                return gridAStarPlanner.calculatePlan(inputPlan);
             case WAVEFRONT:
                 return gridWavefrontOnlyPlanner.calculatePlan(inputPlan);
         }
-        return null;
+        throw new IllegalStateException();
     }
 
     ObservableObjectValue<Statistics> statisticsProperty() {
@@ -95,7 +95,7 @@ public class TestExecutor {
 
         private final TestCase testCase;
         private AlgorithmType algorithmType;
-        private ASWOutputPlan<GridCollectiveStateSpace, GridCollectiveState> outputPlan;
+        private GridASWOutputPlan outputPlan;
 
         private TestExecutionTask(TestCase testCase, AlgorithmType algorithmType) {
             this.testCase = testCase;
@@ -104,7 +104,9 @@ public class TestExecutor {
 
         @Override
         protected Void call() throws Exception {
+            testCase.getInputPlan().getStateSpace().resetStateCache();
             outputPlan = executeTestWithGivenStrategy(testCase.getInputPlan(), algorithmType);
+            LOG.info("Plan summary: " + PlanSummaryGenerator.getPlanSummary(testCase.getInputPlan(), outputPlan,new AStarStateStore(), null));
             return null;
         }
 

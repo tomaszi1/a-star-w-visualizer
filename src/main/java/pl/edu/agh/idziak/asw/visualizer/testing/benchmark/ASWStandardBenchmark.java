@@ -1,6 +1,7 @@
 package pl.edu.agh.idziak.asw.visualizer.testing.benchmark;
 
 import org.openjdk.jmh.annotations.*;
+import pl.edu.agh.idziak.asw.astar.SortingPreference;
 import pl.edu.agh.idziak.asw.impl.AlgorithmType;
 
 import java.nio.file.Paths;
@@ -30,21 +31,33 @@ public class ASWStandardBenchmark {
         aswTestSuite = new ASWTestSuite(Paths.get(filePath));
     }
 
-    @Benchmark
-    @BenchmarkMode(Mode.AverageTime)
-    public void runAsw() {
-        aswTestSuite.runTestCase(testCaseId, AlgorithmType.ASW);
+    @TearDown
+    public void teardown() {
+        System.out.println(aswTestSuite.getStats());
     }
 
     @Benchmark
-    @BenchmarkMode(Mode.AverageTime)
+    public void runASW() {
+        aswTestSuite.runTestCase(testCaseId, AlgorithmType.ASW, SortingPreference.NONE);
+    }
+
+    @Benchmark
+    public void runASWHigherGScorePreference() {
+        aswTestSuite.runTestCase(testCaseId, AlgorithmType.ASW, SortingPreference.PREFER_HIGHER_G_SCORE);
+    }
+
+    @Benchmark
     public void runAStar() {
-        aswTestSuite.runTestCase(testCaseId, AlgorithmType.ASTAR_ONLY);
+        aswTestSuite.runTestCase(testCaseId, AlgorithmType.ASTAR_ONLY, SortingPreference.NONE);
     }
 
     @Benchmark
-    @BenchmarkMode(Mode.AverageTime)
+    public void runAStarHigherGScorePreference() {
+        aswTestSuite.runTestCase(testCaseId, AlgorithmType.ASTAR_ONLY, SortingPreference.PREFER_HIGHER_G_SCORE);
+    }
+
+    // @Benchmark
     public void runWavefrontOnly() {
-        aswTestSuite.runTestCase(testCaseId, AlgorithmType.WAVEFRONT);
+        aswTestSuite.runTestCase(testCaseId, AlgorithmType.WAVEFRONT, SortingPreference.NONE);
     }
 }

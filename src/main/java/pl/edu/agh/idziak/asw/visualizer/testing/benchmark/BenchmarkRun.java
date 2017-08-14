@@ -1,11 +1,14 @@
 package pl.edu.agh.idziak.asw.visualizer.testing.benchmark;
 
 import com.google.common.base.Throwables;
+import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.profile.StackProfiler;
 import org.openjdk.jmh.results.RunResult;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.options.ChainedOptionsBuilder;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
+import org.openjdk.jmh.runner.options.TimeValue;
+import org.openjdk.jmh.runner.options.VerboseMode;
 
 import java.util.Collection;
 import java.util.Map;
@@ -24,26 +27,34 @@ public class BenchmarkRun {
     private BenchmarkRun() {
     }
 
-    public static BenchmarkRun build(){
+    public static BenchmarkRun build() {
         return new BenchmarkRun();
     }
 
-    private static Collection<RunResult> runBenchmark(BenchmarkRun BenchmarkRun) {
+    private static Collection<RunResult> runBenchmark(BenchmarkRun benchmarkRun) {
         ChainedOptionsBuilder options = new OptionsBuilder()
-                .include(BenchmarkRun.benchmarkClass.getName())
-                .shouldFailOnError(true)
-                .warmupIterations(0)
-                .forks(BenchmarkRun.debugMode ? 0 : 1)
-                .threads(1)
+                .include(benchmarkRun.benchmarkClass.getName())
+                .shouldFailOnError(benchmarkRun.debugMode)
+                .warmupTime(TimeValue.seconds(2))
+                .warmupIterations(1)
                 .measurementIterations(1)
+                .measurementTime(TimeValue.seconds(5))
+                .forks(benchmarkRun.debugMode ? 0 : 1)
+                .threads(1)
+                .measurementBatchSize(1)
+                .warmupBatchSize(1)
+                .mode(Mode.AverageTime)
+                .timeout(TimeValue.seconds(30))
+                .verbosity(VerboseMode.NORMAL)
+                .shouldDoGC(true)
                 .operationsPerInvocation(1);
 
-        if (BenchmarkRun.profileStack) {
+        if (benchmarkRun.profileStack) {
             options.addProfiler(StackProfiler.class);
         }
 
-        if (BenchmarkRun.args != null) {
-            BenchmarkRun.args.forEach(options::param);
+        if (benchmarkRun.args != null) {
+            benchmarkRun.args.forEach(options::param);
         }
 
         try {
