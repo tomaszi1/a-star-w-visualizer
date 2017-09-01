@@ -16,10 +16,10 @@ public class DrawConstants {
             Color.DODGERBLUE,
             Color.LIGHTGREEN,
             Color.SALMON,
-            Color.BROWN,
-            Color.YELLOW,
             Color.VIOLET,
-            Color.ORANGE
+            Color.YELLOW,
+            Color.ORANGE,
+            Color.GREENYELLOW
     );
 
     public static final Map<String, Color> SUBSPACE_STRIPE_COLORS = ImmutableMap.of(

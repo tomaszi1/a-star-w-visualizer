@@ -195,5 +195,120 @@
       { "id": 2, "row": 3, "col": 0, "targetRow": 3, "targetCol": 6 },
       { "id": 2, "row": 5, "col": 0, "targetRow": 5, "targetCol": 6 }
     ]
+  },
+  {
+    "id": 99,
+    "name": "switcheroo - 2 entities",
+    "stateSpace": [
+      [0, 0, 1, 1, 1, 0, 0],
+      [0, 0, 1, 1, 1, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 1, 1, 1, 0, 0],
+      [0, 0, 1, 1, 1, 0, 0]
+    ],
+    "entities": [
+      { "id": 1, "row": 2, "col": 0, "targetRow": 2, "targetCol": 6 },
+      { "id": 2, "row": 2, "col": 6, "targetRow": 2, "targetCol": 0 }
+    ]
+  },
+  {
+    "id": 111,
+    "name": "switcheroo - 3 entities",
+    "stateSpace": [
+      [0, 0, 1, 1, 1, 0, 0],
+      [0, 0, 1, 1, 1, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 1, 1, 1, 0, 0],
+      [0, 0, 1, 1, 1, 0, 0]
+    ],
+    "entities": [
+      { "id": 1, "row": 2, "col": 0, "targetRow": 2, "targetCol": 6 },
+      { "id": 2, "row": 2, "col": 6, "targetRow": 2, "targetCol": 0 },
+      { "id": 3, "row": 0, "col": 0, "targetRow": 0, "targetCol": 6 }
+    ]
+  },
+  {
+    "id": 222,
+    "name": "switcheroo - 4 entities",
+    "stateSpace": [
+      [0, 0, 1, 1, 1, 0, 0],
+      [0, 0, 1, 1, 1, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 1, 1, 1, 0, 0],
+      [0, 0, 1, 1, 1, 0, 0]
+    ],
+    "entities": [
+      { "id": 1, "row": 2, "col": 0, "targetRow": 2, "targetCol": 6 },
+      { "id": 2, "row": 2, "col": 6, "targetRow": 2, "targetCol": 0 },
+      { "id": 3, "row": 0, "col": 0, "targetRow": 0, "targetCol": 6 },
+      { "id": 4, "row": 4, "col": 6, "targetRow": 4, "targetCol": 0 }
+    ]
+  },
+  {
+    "id": 333,
+    "name": "switcheroo - 5 entities",
+    "stateSpace": [
+      [0, 0, 1, 1, 1, 0, 0],
+      [0, 0, 1, 1, 1, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 1, 1, 1, 0, 0],
+      [0, 0, 1, 1, 1, 0, 0]
+    ],
+    "entities": [
+      { "id": 1, "row": 2, "col": 0, "targetRow": 2, "targetCol": 6 },
+      { "id": 2, "row": 2, "col": 6, "targetRow": 2, "targetCol": 0 },
+      { "id": 3, "row": 0, "col": 0, "targetRow": 0, "targetCol": 6 },
+      { "id": 4, "row": 4, "col": 6, "targetRow": 4, "targetCol": 0 },
+      { "id": 5, "row": 0, "col": 6, "targetRow": 0, "targetCol": 0 }
+    ]
+  },
+  {
+    "id": 1111,
+    "name": "terrain - 2 entities",
+    "stateSpace": [
+      [0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
+      [0, 0, 0, 1, 0, 1, 0, 1, 0, 0],
+      [0, 0, 0, 0, 0, 1, 0, 1, 0, 0],
+      [0, 0, 0, 1, 0, 1, 0, 1, 0, 0],
+      [0, 0, 0, 1, 0, 1, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 1, 0, 1, 0, 0],
+      [0, 0, 0, 1, 0, 1, 0, 1, 0, 0]
+    ],
+    "entities": [
+      { "id": 1, "row": 2, "col": 0, "targetRow": 2, "targetCol": 9 },
+      { "id": 2, "row": 2, "col": 9, "targetRow": 2, "targetCol": 0 }
+    ]
+  },
+  {
+    "id": 2222,
+    "name": "terrain - 4 entities",
+    "stateSpace": [
+      [0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
+      [0, 0, 0, 1, 0, 1, 0, 1, 0, 0],
+      [0, 0, 0, 0, 0, 1, 0, 1, 0, 0],
+      [0, 0, 0, 1, 0, 1, 0, 1, 0, 0],
+      [0, 0, 0, 1, 0, 1, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 1, 0, 1, 0, 0],
+      [0, 0, 0, 1, 0, 1, 0, 1, 0, 0]
+    ],
+    "entities": [
+      { "id": 1, "row": 1, "col": 0, "targetRow": 1, "targetCol": 9 },
+      { "id": 2, "row": 2, "col": 9, "targetRow": 2, "targetCol": 0 },
+      { "id": 3, "row": 4, "col": 0, "targetRow": 4, "targetCol": 9 },
+      { "id": 4, "row": 5, "col": 9, "targetRow": 5, "targetCol": 0 }
+    ]
+  },
+  {
+    "id": 8888,
+    "name": "maybe collide - 3 entities",
+    "stateSpaceRows": 10,
+    "stateSpaceCols": 10,
+    "neighborhood": 1,
+    "entities": [
+      { "id": 1, "row": 0, "col": 0, "targetRow": 8, "targetCol": 9 },
+      { "id": 2, "row": 1, "col": 0, "targetRow": 9, "targetCol": 9 },
+      { "id": 3, "row": 5, "col": 9, "targetRow": 5, "targetCol": 0 },
+      { "id": 4, "row": 0, "col": 7, "targetRow": 9, "targetCol": 7 }
+    ]
   }
 ]

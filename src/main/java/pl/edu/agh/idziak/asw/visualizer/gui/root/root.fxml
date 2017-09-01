@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.canvas.Canvas?>
+<?import javafx.embed.swing.SwingNode?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.embed.swing.SwingNode?>
 <BorderPane fx:id="rootBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
             xmlns="http://javafx.com/javafx/8.0.91" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="pl.edu.agh.idziak.asw.visualizer.gui.root.RootPresenter">
@@ -24,7 +23,6 @@
                     <SwingNode fx:id="swingCanvasWrapper"/>
                 </ScrollPane>
             </StackPane>
-            <fx:include source="../editpanel/editPanel.fxml"/>
         </SplitPane>
     </center>
     <bottom>
@@ -38,6 +36,14 @@
             <Button fx:id="buttonScaleDown" text="Scale down"/>
             <Button fx:id="buttonQuickSaveCanvas" text="Quick-save canvas"/>
             <Button fx:id="buttonStartBenchmark" text="Start benchmark"/>
+            <Label text="dc:" />
+            <TextField fx:id="textFieldRiskProximity" prefWidth="40.0" text="2.0"/>
+            <Label text="gr:" />
+            <TextField fx:id="textFieldExpansionFactor" prefWidth="40.0" text="1"/>
+            <Label text="minSS:" />
+            <TextField fx:id="textFieldSubspaceMinOrder" prefWidth="40.0" text="0"/>
+            <Label text="maxSS:" />
+            <TextField fx:id="textFieldSubspaceMaxOrder" prefWidth="40.0" text="99"/>
         </ToolBar>
     </bottom>
 </BorderPane>

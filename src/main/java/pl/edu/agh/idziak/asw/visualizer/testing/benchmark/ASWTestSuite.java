@@ -52,18 +52,19 @@ public class ASWTestSuite {
                 .filter(tc -> tc.getId() == id)
                 .findFirst()
                 .orElseThrow(() -> new NoSuchElementException("Test with id " + id + " not found"));
-        scheduleInterrupt();
+        Timer timer = scheduleInterrupt();
         GridASWOutputPlan output;
         try {
             output = runAlgorithm(testCase, algorithmType, preference);
         } finally {
             testCase.getInputPlan().getStateSpace().resetStateCache();
+            timer.cancel();
         }
         String planSummary = PlanSummaryGenerator.getPlanSummary(testCase.getInputPlan(),output,monitor,preference);
         executions.compute(planSummary, (summary, count) -> count == null ? 1 : count + 1);
     }
 
-    private void scheduleInterrupt() {
+    private Timer scheduleInterrupt() {
         Thread thread = Thread.currentThread();
         Timer timer = new Timer(true);
         timer.schedule(new TimerTask() {
@@ -71,7 +72,8 @@ public class ASWTestSuite {
             public void run() {
                 thread.interrupt();
             }
-        }, 30000);
+        }, 60000);
+        return timer;
     }
 
     private GridASWOutputPlan runAlgorithm(TestCase testCase, AlgorithmType algorithmType, SortingPreference preference) {

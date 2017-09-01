@@ -7,6 +7,8 @@ public class GridParams {
 
     private static final int LABEL_SPACE_OFFSET = 30;
     private double scaleFactor = 1;
+    private int deviationSubspaceMinOrder = 0;
+    private int deviationSubspaceMaxOrder = 1000;
 
     public void scaleUp() {
         scaleFactor = scaleFactor * 5 / 4;
@@ -47,12 +49,16 @@ public class GridParams {
         return DrawConstants.ENTITY_STOP_DOT_SIZE * scaleFactor;
     }
 
+    public int getDeviationSubspaceMinOrder(){
+        return deviationSubspaceMinOrder;
+    }
+
     public double getPathPointCircleDiameter(int overlaps) {
         if (overlaps <= 2) {
-            return getCellWidth() * 0.5;
+            return getCellWidth() * 0.4;
         }
         if (overlaps <= 4) {
-            return getCellWidth() * 0.45;
+            return getCellWidth() * 0.4;
         }
         if (overlaps <= 9) {
             return getCellWidth() * 0.33;
@@ -66,5 +72,17 @@ public class GridParams {
 
     public int getLabelCenterOffset() {
         return LABEL_SPACE_OFFSET / 2;
+    }
+
+    public int getDeviationSubspaceMaxOrder() {
+        return deviationSubspaceMaxOrder;
+    }
+
+    public void setDeviationSubspaceMinOrder(int deviationSubspaceMinOrder) {
+        this.deviationSubspaceMinOrder = deviationSubspaceMinOrder;
+    }
+
+    public void setDeviationSubspaceMaxOrder(int deviationSubspaceMaxOrder) {
+        this.deviationSubspaceMaxOrder = deviationSubspaceMaxOrder;
     }
 }

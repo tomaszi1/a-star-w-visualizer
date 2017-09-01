@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.edu.agh.idziak.asw.astar.AStarIterationData;
 import pl.edu.agh.idziak.asw.astar.AStarStateMonitor;
+import pl.edu.agh.idziak.asw.astar.SortingPreference;
 import pl.edu.agh.idziak.asw.common.Statistics;
 import pl.edu.agh.idziak.asw.impl.AlgorithmType;
 import pl.edu.agh.idziak.asw.impl.grid2d.*;
@@ -41,6 +42,9 @@ public class TestExecutor {
         gridAStarPlanner = new GridAStarPlanner();
         gridAStarPlanner.setAStarCurrentStateMonitor(new AStarMonitor());
         gridWavefrontOnlyPlanner = new GridWavefrontOnlyPlanner();
+        gridAStarPlanner.setAStarSortingPreference(SortingPreference.PREFER_HIGHER_G_SCORE);
+        gridASWPlanner.setAStarSortingPreference(SortingPreference.PREFER_HIGHER_G_SCORE);
+
         executorService = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder()
                 .setDaemon(true)
                 .setNameFormat("algorithmExecutionThread")
@@ -121,5 +125,17 @@ public class TestExecutor {
         protected void failed() {
             executionObserver.executionFailed(getException());
         }
+    }
+
+    public GridASWPlanner getGridASWPlanner() {
+        return gridASWPlanner;
+    }
+
+    public GridAStarPlanner getGridAStarPlanner() {
+        return gridAStarPlanner;
+    }
+
+    public GridWavefrontOnlyPlanner getGridWavefrontOnlyPlanner() {
+        return gridWavefrontOnlyPlanner;
     }
 }

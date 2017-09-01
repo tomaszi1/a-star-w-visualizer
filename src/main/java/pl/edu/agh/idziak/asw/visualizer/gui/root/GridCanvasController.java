@@ -110,7 +110,7 @@ public class GridCanvasController {
         }
     }
 
-    private void repaint() {
+    public void repaint() {
         drawCurrentTestCase();
     }
 
@@ -254,4 +254,7 @@ public class GridCanvasController {
         }
     }
 
+    public GridParams getGridParams() {
+        return gridParams;
+    }
 }

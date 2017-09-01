@@ -38,7 +38,7 @@ public class BenchmarkRun {
                 .warmupTime(TimeValue.seconds(2))
                 .warmupIterations(1)
                 .measurementIterations(1)
-                .measurementTime(TimeValue.seconds(5))
+                .measurementTime(TimeValue.seconds(30))
                 .forks(benchmarkRun.debugMode ? 0 : 1)
                 .threads(1)
                 .measurementBatchSize(1)

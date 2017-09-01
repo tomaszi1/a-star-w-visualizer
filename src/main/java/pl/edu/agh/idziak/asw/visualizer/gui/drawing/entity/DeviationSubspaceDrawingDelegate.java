@@ -17,40 +17,46 @@ import static pl.edu.agh.idziak.asw.visualizer.gui.drawing.DrawingUtils.clipRect
 
 public class DeviationSubspaceDrawingDelegate {
     private static final Logger LOG = LoggerFactory.getLogger(DeviationSubspaceDrawingDelegate.class);
+    public static final int SKIP_SUBSPACES_SMALLER_THAN = 2;
     private SubspaceCellDrawingDelegate subspaceCellDrawingDelegate;
     private GridParams gridParams;
 
-    public DeviationSubspaceDrawingDelegate( GridParams gridParams) {
+    public DeviationSubspaceDrawingDelegate(GridParams gridParams) {
         this.subspaceCellDrawingDelegate = new SubspaceCellDrawingDelegate();
         this.gridParams = gridParams;
     }
 
     public void drawSubspacePlans(GraphicsContext gc, List<DeviationSubspacePlan<GridCollectiveState>> plans) {
         subspaceCellDrawingDelegate.resetState();
-        plans.forEach(plan -> drawSingleDevSubspacePlan(gc, plan));
+        plans.forEach(plan -> drawSingleSubspacePlan(gc, plan));
     }
 
     public void drawSubspacePlans(Graphics2D gc, List<DeviationSubspacePlan<GridCollectiveState>> plans) {
         subspaceCellDrawingDelegate.resetState();
-        plans.forEach(plan -> drawSingleDevSubspacePlan(gc, plan));
+        plans.forEach(plan -> drawSingleSubspacePlan(gc, plan));
     }
 
 
-    public void drawSingleDevSubspacePlan(GraphicsContext gc, DeviationSubspacePlan<GridCollectiveState> devSubspacePlan) {
+    public void drawSingleSubspacePlan(GraphicsContext gc, DeviationSubspacePlan<GridCollectiveState> devSubspacePlan) {
         if (devSubspacePlan.getDeviationSubspace() instanceof GridDeviationSubspace) {
             LOG.debug("Drawing subspace");
-            ((GridDeviationSubspace) devSubspacePlan.getDeviationSubspace())
-                    .getContainedEntityStates()
+            GridDeviationSubspace devSubspace = (GridDeviationSubspace) devSubspacePlan.getDeviationSubspace();
+            devSubspace.getContainedEntityStates()
                     .forEach(entityState -> drawDevSubspaceSquare(gc, entityState));
         }
         subspaceCellDrawingDelegate.switchPattern();
     }
 
-    public void drawSingleDevSubspacePlan(Graphics2D gc, DeviationSubspacePlan<GridCollectiveState> devSubspacePlan) {
+    public void drawSingleSubspacePlan(Graphics2D gc, DeviationSubspacePlan<GridCollectiveState> devSubspacePlan) {
         if (devSubspacePlan.getDeviationSubspace() instanceof GridDeviationSubspace) {
             LOG.debug("Drawing subspace");
-            ((GridDeviationSubspace) devSubspacePlan.getDeviationSubspace())
-                    .getContainedEntityStates()
+            GridDeviationSubspace devSubspace = (GridDeviationSubspace) devSubspacePlan.getDeviationSubspace();
+            int entityStatesCount = devSubspace.getTargetState().entityStatesCount();
+            if (entityStatesCount < gridParams.getDeviationSubspaceMinOrder()
+                    || entityStatesCount > gridParams.getDeviationSubspaceMaxOrder()) {
+                return;
+            }
+            devSubspace.getContainedEntityStates()
                     .forEach(entityState -> drawDevSubspaceSquare(gc, entityState));
         }
         subspaceCellDrawingDelegate.switchPattern();
@@ -69,6 +75,7 @@ public class DeviationSubspaceDrawingDelegate {
         subspaceCellDrawingDelegate.drawSubspaceCell(gc);
         gc.restore();
     }
+
     private void drawDevSubspaceSquare(Graphics2D gc, GridEntityState state) {
         int topY = gridParams.getTopPosForIndex(state.getRow());
         int bottomY = gridParams.getTopPosForIndex(state.getRow() + 1);

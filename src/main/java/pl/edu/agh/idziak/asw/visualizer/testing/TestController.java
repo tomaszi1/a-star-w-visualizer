@@ -123,4 +123,8 @@ public class TestController {
         }
         benchmarkExecutor.startBenchmark(currentTestsFile.getAbsolutePath(), activeTestCase.get().getId());
     }
+
+    public TestExecutor getTestExecutor() {
+        return testExecutor;
+    }
 }

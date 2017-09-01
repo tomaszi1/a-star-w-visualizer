@@ -9,6 +9,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -34,6 +35,10 @@ public class RootPresenter implements Initializable {
     private static final Logger LOG = LoggerFactory.getLogger(RootPresenter.class);
     private static final String ENV_VAR_PRELOAD_TEST = "preload.test";
 
+    @FXML
+    private TextField textFieldSubspaceMinOrder;
+    @FXML
+    private TextField textFieldSubspaceMaxOrder;
     @FXML
     private SwingNode swingCanvasWrapper;
     @FXML
@@ -64,6 +69,10 @@ public class RootPresenter implements Initializable {
     private ListView<TestCase> testCaseListView;
     @FXML
     private Window window;
+    @FXML
+    private TextField textFieldRiskProximity;
+    @FXML
+    private TextField textFieldExpansionFactor;
 
     @Inject
     private TestController testController;
@@ -85,6 +94,8 @@ public class RootPresenter implements Initializable {
         initializeTestCaseList();
         initializeButtons();
         preloadTest();
+        updateExpansionFactor();
+        updateRiskProximity();
     }
 
     private void initializeTestCaseList() {
@@ -112,6 +123,36 @@ public class RootPresenter implements Initializable {
             }
         });
         buttonStartBenchmark.setOnAction(event -> testController.executeBenchmark());
+        textFieldRiskProximity.setOnAction(event -> updateRiskProximity());
+        textFieldExpansionFactor.setOnAction(event -> updateExpansionFactor());
+        textFieldSubspaceMaxOrder.setOnAction(event -> updateSubspaceDisplayOrder());
+        textFieldSubspaceMinOrder.setOnAction(event -> updateSubspaceDisplayOrder());
+    }
+
+    private void updateSubspaceDisplayOrder() {
+        gridCanvasController.getGridParams().setDeviationSubspaceMinOrder(
+                Integer.parseInt(textFieldSubspaceMinOrder.getText()));
+        gridCanvasController.getGridParams().setDeviationSubspaceMaxOrder(
+                Integer.parseInt(textFieldSubspaceMaxOrder.getText()));
+        gridCanvasController.repaint();
+    }
+
+    private void updateExpansionFactor() {
+        int expansionFactor = Integer.parseInt(textFieldExpansionFactor.getText());
+        System.out.println("Setting expansion factor to " + expansionFactor);
+        testController.getTestExecutor()
+                .getGridASWPlanner()
+                .getDeviationSubspaceLocator()
+                .setExpansionFactor(expansionFactor);
+    }
+
+    private void updateRiskProximity() {
+        double riskProximity = Double.parseDouble(textFieldRiskProximity.getText());
+        System.out.println("Setting risk proximity to " + riskProximity);
+        testController.getTestExecutor()
+                .getGridASWPlanner()
+                .getDeviationSubspaceLocator()
+                .setRiskProximity(riskProximity);
     }
 
     private void buttonOpenTestsClicked() {

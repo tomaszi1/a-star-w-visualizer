@@ -22,7 +22,7 @@ public class GridDrawingDelegate {
         int cols = stateSpace.getCols();
         gc.save();
         gc.setStroke(Color.BLACK);
-        gc.setLineWidth(1);
+        gc.setLineWidth(2);
 
         for (int curRow = 0; curRow <= rows; curRow++) {
             int yPos = curRow * gridParams.getCellWidth();
@@ -40,7 +40,7 @@ public class GridDrawingDelegate {
         int rows = stateSpace.getRows();
         int cols = stateSpace.getCols();
 
-        g.setStroke(new BasicStroke(1f));
+        g.setStroke(new BasicStroke(1.5f));
 
         for (int curRow = 0; curRow <= rows; curRow++) {
             int yPos = gridParams.getTopPosForIndex(curRow);
