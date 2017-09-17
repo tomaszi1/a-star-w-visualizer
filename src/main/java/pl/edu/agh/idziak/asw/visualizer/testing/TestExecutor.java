@@ -6,8 +6,6 @@ import javafx.beans.value.ObservableObjectValue;
 import javafx.concurrent.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.edu.agh.idziak.asw.astar.AStarIterationData;
-import pl.edu.agh.idziak.asw.astar.AStarStateMonitor;
 import pl.edu.agh.idziak.asw.astar.SortingPreference;
 import pl.edu.agh.idziak.asw.common.Statistics;
 import pl.edu.agh.idziak.asw.impl.AlgorithmType;
@@ -17,6 +15,7 @@ import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.model.TestCase;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Tomasz on 04.09.2016.
@@ -26,7 +25,7 @@ public class TestExecutor {
 
     private final ObservableObjectValue<TestCase> activeTestCase;
     private final SimpleObjectProperty<Statistics> statistics;
-    private final ExecutorService executorService;
+    private ExecutorService executorService;
     private final ExecutionObserver executionObserver;
 
     private final GridASWPlanner gridASWPlanner;
@@ -38,44 +37,38 @@ public class TestExecutor {
         this.executionObserver = executionObserver;
         statistics = new SimpleObjectProperty<>();
         gridASWPlanner = new GridASWPlanner();
-        gridASWPlanner.setAStarCurrentStateMonitor(new AStarMonitor());
         gridAStarPlanner = new GridAStarPlanner();
-        gridAStarPlanner.setAStarCurrentStateMonitor(new AStarMonitor());
         gridWavefrontOnlyPlanner = new GridWavefrontOnlyPlanner();
         gridAStarPlanner.setAStarSortingPreference(SortingPreference.PREFER_HIGHER_G_SCORE);
-        gridASWPlanner.setAStarSortingPreference(SortingPreference.PREFER_HIGHER_G_SCORE);
+        gridASWPlanner.setAStarSortingPreference(SortingPreference.NONE);
 
+        createExecutorService();
+    }
+
+    private void createExecutorService() {
         executorService = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder()
                 .setDaemon(true)
                 .setNameFormat("algorithmExecutionThread")
                 .build());
     }
 
-
-    private static class AStarMonitor extends AStarStateMonitor<GridCollectiveState> {
-
-        @Override
-        public void onIteration(AStarIterationData<GridCollectiveState> aStarIterationData) {
-            // String state = Utils.printReadableState(aStarIterationData.getCurrentState().getKey(), ((GridInputPlan) aStarIterationData.getInputPlan()));
-            // System.out.println(state);
-            // System.out.println(aStarIterationData.getCurrentState().getPrimaryValue());
-            // System.out.println(aStarIterationData.getCurrentState().getSecondaryValue());
-            if (aStarIterationData.getClosedSetSize() % 10 == 0) {
-                LOG.info("openSet={}, closedSet={}", aStarIterationData.getOpenSetSize(), aStarIterationData.getClosedSetSize());
-            }
-        }
-
-        @Override
-        public void onFinish(int closedSetSize, int openSetSize) {
-            LOG.info("A* statistics: closedSetSize={}, openSetSize={}", closedSetSize, openSetSize);
+    public void stopRunningTest() {
+        executorService.shutdownNow();
+        try {
+            executorService.awaitTermination(10, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    void invokeTestInNewThread(AlgorithmType algorithmType) {
+    void invokeTestInNewThread(AlgorithmType algorithmType, Runnable callback) {
         TestCase testCase = activeTestCase.get();
         if (testCase == null)
             return;
-        TestExecutionTask testExecutionTask = new TestExecutionTask(testCase, algorithmType);
+        TestExecutionTask testExecutionTask = new TestExecutionTask(testCase, algorithmType,callback);
+        if(executorService.isShutdown()){
+            createExecutorService();
+        }
         executorService.submit(testExecutionTask);
     }
 
@@ -99,18 +92,21 @@ public class TestExecutor {
 
         private final TestCase testCase;
         private AlgorithmType algorithmType;
+        private Runnable callback;
         private GridASWOutputPlan outputPlan;
 
-        private TestExecutionTask(TestCase testCase, AlgorithmType algorithmType) {
+        private TestExecutionTask(TestCase testCase, AlgorithmType algorithmType, Runnable callback) {
             this.testCase = testCase;
             this.algorithmType = algorithmType;
+            this.callback = callback;
         }
 
         @Override
         protected Void call() throws Exception {
-            testCase.getInputPlan().getStateSpace().resetStateCache();
+            testCase.getInputPlan().getCollectiveStateSpace().resetStateCache();
+            AStarStateStore monitor = setupMonitor();
             outputPlan = executeTestWithGivenStrategy(testCase.getInputPlan(), algorithmType);
-            LOG.info("Plan summary: " + PlanSummaryGenerator.getPlanSummary(testCase.getInputPlan(), outputPlan,new AStarStateStore(), null));
+            LOG.info("Plan summary: " + PlanSummaryGenerator.getPlanSummary(testCase.getInputPlan(), outputPlan, monitor, null));
             return null;
         }
 
@@ -119,12 +115,20 @@ public class TestExecutor {
             LOG.info("Test executed, path: {}", outputPlan);
             testCase.setOutputPlan(outputPlan);
             executionObserver.executionSucceeded(testCase);
+            callback.run();
         }
 
         @Override
         protected void failed() {
             executionObserver.executionFailed(getException());
         }
+    }
+
+    private AStarStateStore setupMonitor() {
+        AStarStateStore monitor = new AStarStateStore();
+        gridASWPlanner.setAStarCurrentStateMonitor(monitor);
+        gridAStarPlanner.setAStarCurrentStateMonitor(monitor);
+        return monitor;
     }
 
     public GridASWPlanner getGridASWPlanner() {
@@ -138,4 +142,6 @@ public class TestExecutor {
     public GridWavefrontOnlyPlanner getGridWavefrontOnlyPlanner() {
         return gridWavefrontOnlyPlanner;
     }
+
+
 }

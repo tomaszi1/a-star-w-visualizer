@@ -1,6 +1,7 @@
 package pl.edu.agh.idziak.asw.visualizer.testing;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableObjectValue;
@@ -15,8 +16,8 @@ import pl.edu.agh.idziak.asw.visualizer.GlobalEventBus;
 import pl.edu.agh.idziak.asw.visualizer.gui.root.DialogDisplay;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.io.DTOMapper;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.io.TestCaseDTO;
-import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.model.TestCase;
 import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.io.TestLoader;
+import pl.edu.agh.idziak.asw.visualizer.testing.grid2d.model.TestCase;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,9 +53,9 @@ public class TestController {
         testExecutor = new TestExecutor(activeTestCaseProperty(), executionObserver);
     }
 
-    public void executeActiveTest(AlgorithmType algorithmType) {
+    public void executeActiveTest(AlgorithmType algorithmType, Runnable callback) {
         try {
-            testExecutor.invokeTestInNewThread(algorithmType);
+            testExecutor.invokeTestInNewThread(algorithmType,callback);
         } catch (RuntimeException e) {
             dialogDisplay.displayException(LOG_MESSAGE_TEST_FAILED, e);
             LOG.error(LOG_MESSAGE_TEST_FAILED, e);
@@ -108,8 +109,10 @@ public class TestController {
     private final ExecutionObserver executionObserver = new ExecutionObserver() {
         @Override
         public void executionFailed(Throwable e) {
-            dialogDisplay.displayException("Test execution failed", e);
-            LOG.error("Test exec failed", e);
+            if(!(Throwables.getRootCause(e) instanceof InterruptedException)){
+                dialogDisplay.displayException("Test execution failed", e);
+                LOG.error("Test exec failed", e);
+            }
         }
 
         @Override
@@ -127,4 +130,9 @@ public class TestController {
     public TestExecutor getTestExecutor() {
         return testExecutor;
     }
+
+    public void stopRunningTest() {
+        testExecutor.stopRunningTest();
+    }
+
 }

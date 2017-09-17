@@ -3,7 +3,6 @@ package pl.edu.agh.idziak.asw.visualizer.testing.grid2d.model;
 import com.google.common.base.MoreObjects;
 import pl.edu.agh.idziak.asw.impl.grid2d.GridCollectiveState;
 import pl.edu.agh.idziak.asw.impl.grid2d.GridInputPlan;
-import pl.edu.agh.idziak.asw.impl.grid2d.GridCollectiveStateSpace;
 import pl.edu.agh.idziak.asw.model.ASWOutputPlan;
 import pl.edu.agh.idziak.asw.visualizer.GlobalEventBus;
 import pl.edu.agh.idziak.asw.visualizer.gui.drawing.simulation.NewSimulationEvent;
@@ -49,7 +48,7 @@ public class TestCase {
         return simulation;
     }
 
-    public void setOutputPlan(ASWOutputPlan<GridCollectiveStateSpace, GridCollectiveState> outputPlan) {
+    public void setOutputPlan(ASWOutputPlan<GridCollectiveState> outputPlan) {
         simulation = new Simulation(inputPlan, outputPlan);
         publishNewSimulationEvent();
     }

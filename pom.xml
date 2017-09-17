@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>pl.edu.agh.idziak.asw</groupId>
     <artifactId>a-star-w-visualizer</artifactId>
-    <version>0.1-PREALPHA</version>
+    <version>1.0</version>
     <packaging>jar</packaging>
     <name>a-star-w-visualizer</name>
 
@@ -20,7 +20,7 @@
         <dependency>
             <groupId>pl.edu.agh.idziak.asw</groupId>
             <artifactId>a-star-w-algorithm</artifactId>
-            <version>0.1-ALPHA</version>
+            <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

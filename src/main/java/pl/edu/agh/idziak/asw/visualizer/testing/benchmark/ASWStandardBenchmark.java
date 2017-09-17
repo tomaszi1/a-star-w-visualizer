@@ -36,12 +36,12 @@ public class ASWStandardBenchmark {
         System.out.println(aswTestSuite.getStats());
     }
 
-    // @Benchmark
+    @Benchmark
     public void runASW() {
         aswTestSuite.runTestCase(testCaseId, AlgorithmType.ASW, SortingPreference.NONE);
     }
 
-    // @Benchmark
+    @Benchmark
     public void runASWHigherGScorePreference() {
         aswTestSuite.runTestCase(testCaseId, AlgorithmType.ASW, SortingPreference.PREFER_HIGHER_G_SCORE);
     }
@@ -56,7 +56,7 @@ public class ASWStandardBenchmark {
         aswTestSuite.runTestCase(testCaseId, AlgorithmType.ASTAR_ONLY, SortingPreference.PREFER_HIGHER_G_SCORE);
     }
 
-    // @Benchmark
+    @Benchmark
     public void runWavefrontOnly() {
         aswTestSuite.runTestCase(testCaseId, AlgorithmType.WAVEFRONT, SortingPreference.NONE);
     }

@@ -54,7 +54,6 @@ public class GridCanvasController {
     private GridParams gridParams = new GridParams();
 
     private PathDrawingDelegate pathDrawingDelegate;
-    private EntityDrawingDelegate entityDrawingDelegate;
     private ObstacleDrawingDelegate obstacleDrawingDelegate;
     private GridDrawingDelegate gridDrawingDelegate;
     private DeviationSubspaceDrawingDelegate deviationSubspaceDrawingDelegate;
@@ -69,7 +68,6 @@ public class GridCanvasController {
         }
 
         // drawers
-        this.entityDrawingDelegate = new EntityDrawingDelegate(gridParams);
         this.pathDrawingDelegate = new PathDrawingDelegateImpl(gridParams);
         this.obstacleDrawingDelegate = new ObstacleDrawingDelegate(gridParams);
         this.gridDrawingDelegate = new GridDrawingDelegate(gridParams);
@@ -125,7 +123,7 @@ public class GridCanvasController {
             SwingUtilities.invokeLater(this::drawSwingCanvas);
         } else {
             GraphicsContext gc = canvas.getGraphicsContext2D();
-            drawStateSpace(gc, currentTestCase.getInputPlan().getStateSpace());
+            drawStateSpace(gc, currentTestCase.getInputPlan().getCollectiveStateSpace());
             drawDeviationSubspaces(gc);
             drawPaths(new GraphicsWrapper(gc));
             // entityDrawingDelegate.drawEntities(gc, currentTestCase);
@@ -135,11 +133,11 @@ public class GridCanvasController {
     private void drawSwingCanvas() {
         SVGDocument svgDoc = (SVGDocument) SVGDOMImplementation.getDOMImplementation().createDocument(SVGDOMImplementation.SVG_NAMESPACE_URI, "svg", null);
         SVGGraphics2D g = new SVGGraphics2D(SVGGeneratorContext.createDefault(svgDoc), true);
-        int cols = currentTestCase.getInputPlan().getStateSpace().getCols();
-        int rows = currentTestCase.getInputPlan().getStateSpace().getRows();
+        int cols = currentTestCase.getInputPlan().getCollectiveStateSpace().getCols();
+        int rows = currentTestCase.getInputPlan().getCollectiveStateSpace().getRows();
         g.setSVGCanvasSize(new Dimension(gridParams.getTopPosForIndex(cols) + 1, gridParams.getTopPosForIndex(rows) + 1));
 
-        drawStateSpace(g, currentTestCase.getInputPlan().getStateSpace());
+        drawStateSpace(g, currentTestCase.getInputPlan().getCollectiveStateSpace());
         drawDeviationSubspaces(g);
         drawPaths(new GraphicsWrapper(g));
 
@@ -150,7 +148,7 @@ public class GridCanvasController {
 
     private void drawPaths(GraphicsWrapper g) {
         Simulation activeSimulation = currentTestCase.getActiveSimulation();
-        ASWOutputPlan<GridCollectiveStateSpace, GridCollectiveState> outputPlan;
+        ASWOutputPlan<GridCollectiveState> outputPlan;
         if (activeSimulation != null) {
             outputPlan = activeSimulation.getOutputPlan();
         } else {

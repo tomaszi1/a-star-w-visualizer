@@ -10,8 +10,8 @@ import pl.edu.agh.idziak.asw.impl.grid2d.GridInputPlan;
 public class Utils {
 
     public static String printReadableState(GridCollectiveState currentState, GridInputPlan inputPlan) {
-        int rows = inputPlan.getStateSpace().getRows();
-        int cols = inputPlan.getStateSpace().getCols();
+        int rows = inputPlan.getCollectiveStateSpace().getRows();
+        int cols = inputPlan.getCollectiveStateSpace().getCols();
         byte[][] array = new byte[rows][cols];
         byte index = 1;
         int size = inputPlan.getTargetCollectiveState().getEntityStates().size();

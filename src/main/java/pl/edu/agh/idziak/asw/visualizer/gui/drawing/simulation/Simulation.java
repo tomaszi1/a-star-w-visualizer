@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import pl.edu.agh.idziak.asw.impl.grid2d.GridCollectiveState;
 import pl.edu.agh.idziak.asw.impl.grid2d.GridEntityState;
 import pl.edu.agh.idziak.asw.impl.grid2d.GridInputPlan;
-import pl.edu.agh.idziak.asw.impl.grid2d.GridCollectiveStateSpace;
 import pl.edu.agh.idziak.asw.model.ASWOutputPlan;
 import pl.edu.agh.idziak.asw.visualizer.GlobalEventBus;
 
@@ -21,14 +20,14 @@ public class Simulation {
     private static final Logger LOG = LoggerFactory.getLogger(Simulation.class);
 
     private final GridInputPlan inputPlan;
-    private final ASWOutputPlan<GridCollectiveStateSpace, GridCollectiveState> outputPlan;
+    private final ASWOutputPlan<GridCollectiveState> outputPlan;
     private GridCollectiveState currentState;
     private GridCollectiveState nextPlannedState;
     private Map<Object, Deque<GridEntityState>> deviationsForNextStep = new HashMap<>();
     private Stack<GridCollectiveState> historicalStates = new Stack<>();
     private EventBus eventBus = GlobalEventBus.INSTANCE.get();
 
-    public Simulation(GridInputPlan inputPlan, ASWOutputPlan<GridCollectiveStateSpace, GridCollectiveState> outputPlan) {
+    public Simulation(GridInputPlan inputPlan, ASWOutputPlan<GridCollectiveState> outputPlan) {
         this.inputPlan = inputPlan;
         this.outputPlan = outputPlan;
         currentState = inputPlan.getInitialCollectiveState();
@@ -37,7 +36,7 @@ public class Simulation {
 
     public boolean nextStep() {
         GridCollectiveState nextState = getEffectiveNextState();
-        if (nextState == null || !inputPlan.getStateSpace().isValidState(nextState)) {
+        if (nextState == null || !inputPlan.getCollectiveStateSpace().isValidState(nextState)) {
             return false;
         }
         historicalStates.add(currentState);
@@ -160,7 +159,7 @@ public class Simulation {
         return inputPlan;
     }
 
-    public ASWOutputPlan<GridCollectiveStateSpace, GridCollectiveState> getOutputPlan() {
+    public ASWOutputPlan<GridCollectiveState> getOutputPlan() {
         return outputPlan;
     }
 
@@ -193,7 +192,7 @@ public class Simulation {
         if (currentStateForEntity == null) {
             throw new IllegalStateException("Given entity is not a part of given simulation");
         }
-        Set<GridEntityState> possibleDeviations = ImmutableSet.copyOf(inputPlan.getStateSpace().getNeighborStatesOf(currentStateForEntity));
+        Set<GridEntityState> possibleDeviations = ImmutableSet.copyOf(inputPlan.getCollectiveStateSpace().getNeighborStatesOf(currentStateForEntity));
         possibleDeviations.add(currentStateForEntity);
         deviationsQueue = new ArrayDeque<>(possibleDeviations);
         deviationsForNextStep.put(entity, deviationsQueue);

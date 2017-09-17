@@ -1,5 +1,6 @@
 package pl.edu.agh.idziak.asw.visualizer.testing.grid2d.io;
 
+import pl.edu.agh.idziak.asw.common.Utils;
 import pl.edu.agh.idziak.asw.impl.grid2d.GridCollectiveState;
 import pl.edu.agh.idziak.asw.impl.grid2d.GridInputPlan;
 import pl.edu.agh.idziak.asw.impl.grid2d.GridCollectiveStateSpace;
@@ -57,14 +58,14 @@ public class DTOMapper {
     private static GridCollectiveStateSpace mapStateSpace(TestCaseDTO testCaseDTO) {
         GridCollectiveStateSpace stateSpace;
         if (testCaseDTO.getStateSpace() != null) {
-            stateSpace = new GridCollectiveStateSpace(testCaseDTO.getStateSpace());
+            stateSpace = new GridCollectiveStateSpace(Utils.toByteArray(testCaseDTO.getStateSpace()));
         } else {
             if (!isLightlyDefined(testCaseDTO)) {
                 throw new RuntimeException("Missing state space definition in " + testCaseDTO);
             }
             Integer rows = testCaseDTO.getStateSpaceRows();
             Integer cols = testCaseDTO.getStateSpaceCols();
-            stateSpace = new GridCollectiveStateSpace(new int[rows][cols]);
+            stateSpace = new GridCollectiveStateSpace(new byte[rows][cols]);
         }
         return stateSpace;
     }

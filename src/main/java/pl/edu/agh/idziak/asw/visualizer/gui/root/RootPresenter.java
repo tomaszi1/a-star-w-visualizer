@@ -1,20 +1,22 @@
 package pl.edu.agh.idziak.asw.visualizer.gui.root;
 
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.embed.swing.SwingNode;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.edu.agh.idziak.asw.impl.AlgorithmType;
@@ -35,6 +37,10 @@ public class RootPresenter implements Initializable {
     private static final Logger LOG = LoggerFactory.getLogger(RootPresenter.class);
     private static final String ENV_VAR_PRELOAD_TEST = "preload.test";
 
+    @FXML
+    private TextArea textAreaLog;
+    @FXML
+    private Button buttonAbortExecution;
     @FXML
     private TextField textFieldSubspaceMinOrder;
     @FXML
@@ -87,12 +93,17 @@ public class RootPresenter implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        ((org.apache.logging.log4j.core.Logger) LogManager.getRootLogger())
+                .addAppender(new AbstractAppender("textAreaAppender", null, PatternLayout.createDefaultLayout()) {
+                    @Override
+                    public void append(LogEvent logEvent) {
+                        Platform.runLater(() -> textAreaLog.appendText(logEvent.getLevel().name() + ": " + logEvent.getMessage().getFormattedMessage() + "\n"));
+                    }
+                });
         gridCanvasController = new GridCanvasController(canvas, testController.activeTestCaseProperty());
-        SwingUtilities.invokeLater(() -> {
-            swingCanvasWrapper.setContent(gridCanvasController.getSvgCanvas());
-        });
+        SwingUtilities.invokeLater(() -> swingCanvasWrapper.setContent(gridCanvasController.getSvgCanvas()));
         initializeTestCaseList();
-        initializeButtons();
+        initializeComponents();
         preloadTest();
         updateExpansionFactor();
         updateRiskProximity();
@@ -105,11 +116,13 @@ public class RootPresenter implements Initializable {
                 .concat(testController.getActiveTestFileNameProperty()));
     }
 
-    private void initializeButtons() {
+    private void initializeComponents() {
+        textAreaLog.textProperty().addListener((observable, oldValue, newValue) ->
+                textAreaLog.setScrollTop(Double.MAX_VALUE));
         buttonOpenTests.setOnAction(event -> buttonOpenTestsClicked());
-        buttonExecuteTestASW.setOnAction(event -> testController.executeActiveTest(AlgorithmType.ASW));
-        buttonExecuteTestAStar.setOnAction(event -> testController.executeActiveTest(AlgorithmType.ASTAR_ONLY));
-        buttonExecuteTestWavefront.setOnAction(event -> testController.executeActiveTest(AlgorithmType.WAVEFRONT));
+        buttonExecuteTestASW.setOnAction(event -> executeTest(AlgorithmType.ASW));
+        buttonExecuteTestAStar.setOnAction(event -> executeTest(AlgorithmType.ASTAR_ONLY));
+        buttonExecuteTestWavefront.setOnAction(event -> executeTest(AlgorithmType.WAVEFRONT));
         buttonReloadTests.setOnAction(event -> testController.reloadTests());
         buttonScaleDown.setOnAction(event -> gridCanvasController.scaleDown());
         buttonScaleUp.setOnAction(event -> gridCanvasController.scaleUp());
@@ -127,6 +140,31 @@ public class RootPresenter implements Initializable {
         textFieldExpansionFactor.setOnAction(event -> updateExpansionFactor());
         textFieldSubspaceMaxOrder.setOnAction(event -> updateSubspaceDisplayOrder());
         textFieldSubspaceMinOrder.setOnAction(event -> updateSubspaceDisplayOrder());
+
+        buttonAbortExecution.setOnAction(event -> {
+            testController.stopRunningTest();
+            setButtonStatesExecutionActive(false);
+        });
+    }
+
+    private void executeTest(AlgorithmType type) {
+        testController.executeActiveTest(type, () -> Platform.runLater(() -> setButtonStatesExecutionActive(false)));
+        textAreaLog.clear();
+        setButtonStatesExecutionActive(true);
+    }
+
+    private void setButtonStatesExecutionActive(boolean value) {
+        buttonAbortExecution.setDisable(!value);
+
+        buttonStartBenchmark.setDisable(value);
+        buttonExecuteTestAStar.setDisable(value);
+        buttonExecuteTestASW.setDisable(value);
+        buttonExecuteTestWavefront.setDisable(value);
+        buttonOpenTests.setDisable(value);
+        buttonQuickSaveCanvas.setDisable(value);
+        buttonReloadTests.setDisable(value);
+        buttonScaleDown.setDisable(value);
+        buttonScaleUp.setDisable(value);
     }
 
     private void updateSubspaceDisplayOrder() {
@@ -139,7 +177,7 @@ public class RootPresenter implements Initializable {
 
     private void updateExpansionFactor() {
         int expansionFactor = Integer.parseInt(textFieldExpansionFactor.getText());
-        System.out.println("Setting expansion factor to " + expansionFactor);
+        LOG.info("Setting expansion factor to " + expansionFactor);
         testController.getTestExecutor()
                 .getGridASWPlanner()
                 .getDeviationSubspaceLocator()
@@ -148,7 +186,7 @@ public class RootPresenter implements Initializable {
 
     private void updateRiskProximity() {
         double riskProximity = Double.parseDouble(textFieldRiskProximity.getText());
-        System.out.println("Setting risk proximity to " + riskProximity);
+        LOG.info("Setting risk proximity to " + riskProximity);
         testController.getTestExecutor()
                 .getGridASWPlanner()
                 .getDeviationSubspaceLocator()

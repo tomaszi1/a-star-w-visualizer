@@ -7,7 +7,6 @@ import javafx.scene.paint.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.edu.agh.idziak.asw.impl.grid2d.GridCollectiveState;
-import pl.edu.agh.idziak.asw.impl.grid2d.GridCollectiveStateSpace;
 import pl.edu.agh.idziak.asw.impl.grid2d.GridEntityState;
 import pl.edu.agh.idziak.asw.impl.grid2d.GridInputPlan;
 import pl.edu.agh.idziak.asw.model.ASWOutputPlan;
@@ -40,7 +39,7 @@ public class PathDrawingDelegateImpl implements PathDrawingDelegate {
     }
 
     @Override
-    public void drawPaths(GraphicsWrapper gc, GridInputPlan inputPlan, ASWOutputPlan<GridCollectiveStateSpace, GridCollectiveState> outputPlan) {
+    public void drawPaths(GraphicsWrapper gc, GridInputPlan inputPlan, ASWOutputPlan<GridCollectiveState> outputPlan) {
         List<GridCollectiveState> collectivePath;
         GridCollectiveState targetState = inputPlan.getTargetCollectiveState();
         if (outputPlan == null || outputPlan.getCollectivePath() == null) {

@@ -15,7 +15,7 @@ public class Loader extends Application {
     private static final String ENV_VAR_MAXIMIZE = "maximize";
 
     public void start(Stage primaryStage) throws Exception {
-        primaryStage.setTitle("A*W Visualizer 0.1");
+        primaryStage.setTitle("A*W Visualizer 1.0");
         RootView rootView = new RootView();
 
         Scene scene = new Scene(rootView.getView(), 800, 600);

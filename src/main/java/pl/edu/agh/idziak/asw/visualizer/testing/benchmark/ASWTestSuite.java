@@ -57,7 +57,7 @@ public class ASWTestSuite {
         try {
             output = runAlgorithm(testCase, algorithmType, preference);
         } finally {
-            testCase.getInputPlan().getStateSpace().resetStateCache();
+            testCase.getInputPlan().getCollectiveStateSpace().resetStateCache();
             timer.cancel();
         }
         String planSummary = PlanSummaryGenerator.getPlanSummary(testCase.getInputPlan(),output,monitor,preference);

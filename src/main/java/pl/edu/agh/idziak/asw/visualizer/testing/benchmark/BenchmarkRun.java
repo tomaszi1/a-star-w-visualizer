@@ -47,6 +47,7 @@ public class BenchmarkRun {
                 .timeout(TimeValue.seconds(30))
                 .verbosity(VerboseMode.NORMAL)
                 .shouldDoGC(true)
+                .output("./BENCHMARK_RESULTS.txt")
                 .operationsPerInvocation(1);
 
         if (benchmarkRun.profileStack) {

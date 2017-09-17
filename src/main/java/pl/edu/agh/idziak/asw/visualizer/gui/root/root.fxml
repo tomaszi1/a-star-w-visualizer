@@ -16,6 +16,9 @@
                     <ListView fx:id="testCaseListView" onMouseClicked="#listViewClicked" prefHeight="200.0"
                               prefWidth="200.0" BorderPane.alignment="CENTER"/>
                 </center>
+                <bottom>
+                    <TextArea fx:id="textAreaLog" prefHeight="300" wrapText="true" />
+                </bottom>
             </BorderPane>
             <StackPane prefHeight="500" prefWidth="500">
                 <ScrollPane prefWidth="500" prefHeight="500" fitToHeight="true" fitToWidth="true">
@@ -29,6 +32,7 @@
         <ToolBar prefHeight="40.0" prefWidth="300.0" BorderPane.alignment="CENTER">
             <Button fx:id="buttonOpenTests" text="Open tests"/>
             <Button fx:id="buttonReloadTests" text="Reload tests"/>
+            <Button fx:id="buttonAbortExecution" text="Abort execution" disable="true"/>
             <Button fx:id="buttonExecuteTestASW" text="Execute ASW"/>
             <Button fx:id="buttonExecuteTestAStar" text="Execute A* only"/>
             <Button fx:id="buttonExecuteTestWavefront" text="Execute wavefront only"/>

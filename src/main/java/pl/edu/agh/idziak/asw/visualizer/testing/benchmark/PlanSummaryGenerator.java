@@ -11,6 +11,7 @@ import pl.edu.agh.idziak.asw.visualizer.testing.AStarStateStore;
 import pl.edu.agh.idziak.asw.wavefront.DeviationSubspacePlan;
 import pl.edu.agh.idziak.asw.wavefront.impl.GradientDeviationSubspacePlan;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -25,7 +26,25 @@ public class PlanSummaryGenerator {
                 .add("deviationSubspacePlans", getDeviationSubspacePlansSummary(plan))
                 .add("iterations", monitor.getClosedSetSize())
                 .add("maxOpenSetSize", monitor.getMaxOpenSetSize())
+                .add("pathCost", calcPathCost(inputPlan, plan))
                 .toString();
+    }
+
+    private static double calcPathCost(GridInputPlan inputPlan, GridASWOutputPlan plan) {
+        if (plan.getCollectivePath() == null) {
+            return 0d;
+        }
+        Iterator<GridCollectiveState> pathIt = plan.getCollectivePath()
+                .get()
+                .iterator();
+        GridCollectiveState prev = pathIt.next();
+        double sum = 0d;
+        while (pathIt.hasNext()) {
+            GridCollectiveState next = pathIt.next();
+            sum += inputPlan.getDistanceHeuristic().getDistanceBetween(prev, next);
+            prev = next;
+        }
+        return sum;
     }
 
     private static String getDeviationSubspacePlansSummary(GridASWOutputPlan plan) {

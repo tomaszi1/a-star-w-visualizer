@@ -21,13 +21,7 @@ public class BenchmarkExecutor {
                         ASWStandardBenchmark.PARAM_FILE_PATH, filePath,
                         ASWStandardBenchmark.PARAM_TEST_CASE_ID, String.valueOf(id)
                 )).run();
-
-        // results.forEach(runResult -> runResult.getBenchmarkResults().forEach(benchmarkResult -> {
-        //     benchmarkResult.getIterationResults().forEach(iterationResult -> {
-        //         System.out.println(iterationResult.getMetadata());
-        //         System.out.println(iterationResult.getPrimaryResult());
-        //         System.out.println(iterationResult.getScoreUnit());
-        //     });
-        // }));
+        System.out.println("BUUUM");
     }
+
 }
