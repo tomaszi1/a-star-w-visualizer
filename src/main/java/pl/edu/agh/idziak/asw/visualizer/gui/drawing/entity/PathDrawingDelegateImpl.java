@@ -28,6 +28,7 @@ public class PathDrawingDelegateImpl implements PathDrawingDelegate {
     private GridParams gridParams;
     private Iterator<Color> pathPointColorIterator;
     private Color currentColor;
+    public static final boolean PRINT_NUMBERS = true;
 
     public PathDrawingDelegateImpl(GridParams gridParams) {
         this.gridParams = gridParams;
@@ -98,7 +99,7 @@ public class PathDrawingDelegateImpl implements PathDrawingDelegate {
 
     private void drawPathPointLabel(GraphicsWrapper gc, double pathPointCircleDiameter, double pathPointCircleCenterX, double pathPointCircleCenterY, String letter, int step) {
         Graphics2D g = gc.getSwingGraphics();
-        String text = letter + step;
+        String text = PRINT_NUMBERS? letter + step : letter;
         g.setClip(new Ellipse2D.Double(pathPointCircleCenterX - pathPointCircleDiameter / 2, pathPointCircleCenterY - pathPointCircleDiameter / 2, pathPointCircleDiameter, pathPointCircleDiameter));
         int maxFittingFontSize = DrawingUtils.getMaxFittingFontSize(g, DrawConstants.DEFAULT_FONT, text, (int) (pathPointCircleDiameter * 0.9), (int) pathPointCircleDiameter);
         g.setFont(DrawConstants.DEFAULT_FONT.deriveFont((float) maxFittingFontSize));
